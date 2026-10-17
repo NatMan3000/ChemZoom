@@ -41,6 +41,10 @@ No lines yet.
   Means: the last zoom level is a single atom (the one tapped at the molecule level, a backbone carbon by default): its nucleus with protons and neutrons, its electrons, and its bonds shown as electrons shared with the neighbouring atoms, so the reader sees how atoms join into the molecule above.
   Test: the atom level shows one atom filling the view with its nucleus and electrons visible, its bonds lead out to faded neighbours with the shared electrons drawn on them, and nothing at the atom level is a whole molecule.
 
+- **P8 - True to the chemistry by default; a simplified picture says it is a sketch.** True by default, sketches labelled (D11, 17 Oct, picked the guess). Why: the app is for understanding real plastics; a picture that is quietly wrong teaches the wrong thing, while a labelled sketch is honest about what it leaves out.
+  Means: molecules keep every atom and their real shapes; where a view has to simplify (the tangle, the chain beads, an atom's electrons drawn as dots on rings) it carries a visible "sketch" label saying so.
+  Test: every 3D view is either real geometry (molecules from RDKit, real proportions) or shows a label marking it as a sketch; no unlabelled simplification.
+
 ## 4. Words and numbers
 
 No lines yet.
@@ -84,4 +88,4 @@ P lines come from the intent questionnaire of 17 Oct 2026 (`drafts/intent-questi
 
 ## Id index
 
-- **P1** section 1 · **P2** section 1 · **P3** section 1 · **P4** section 1 · **P5** section 5 · **P6** section 5 · **P7** section 3
+- **P1** section 1 · **P2** section 1 · **P3** section 1 · **P4** section 1 · **P5** section 5 · **P6** section 5 · **P7** section 3 · **P8** section 3
