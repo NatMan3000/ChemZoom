@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Working files (DesignPass sweeps, shots)
+scratchpad/
