@@ -26,6 +26,11 @@ export interface MoleculeViewProps {
    * controls. Unset: the whole molecule is ghosted.
    */
   ghostReach?: number
+  /**
+   * AtomGroup id drawn with a soft outline round each of its atoms: which part is one repeat unit when the whole
+   * piece is lit (D19). Calm on purpose, so a hovered or tapped atom still stands out over it.
+   */
+  outline?: string | null
 }
 
 const UP = new THREE.Vector3(0, 1, 0)
@@ -39,8 +44,14 @@ const GHOST_FADE = 2.5 // angstroms over which a ghost fades out past ghostReach
 const GHOST_BALL = 0.8 // ghosts are drawn a little smaller, so they read as background
 const GHOST = new THREE.Color('#C3CCE6')
 const ghostOf = (hex: string) => `#${new THREE.Color(hex).lerp(GHOST, 0.75).getHexString()}`
+// The repeat-unit outline: a thin pale rim round each ball (a back-face shell a little bigger than the ball).
+const OUTLINE_COLOUR = '#E4EAFF'
+const OUTLINE_OPACITY = 0.5
+const OUTLINE_WIDTH = 0.09 // angstroms, plus a share of the ball's own radius
+const OUTLINE_SHARE = 0.07
+const noRaycast = () => null
 
-export function MoleculeView({ molecule, highlight = null, broken = [], onAtomClick, selectedAtom = null, atomScale = 1, onAtomHover, ghostReach }: MoleculeViewProps) {
+export function MoleculeView({ molecule, highlight = null, broken = [], onAtomClick, selectedAtom = null, atomScale = 1, onAtomHover, ghostReach, outline = null }: MoleculeViewProps) {
   // One unit sphere and one unit cylinder shared by every ball and stick in this view.
   const sphere = useMemo(() => new THREE.SphereGeometry(1, 28, 18), [])
   const stick = useMemo(() => new THREE.CylinderGeometry(BOND_RADIUS, BOND_RADIUS, 1, 12), [])
@@ -69,6 +80,10 @@ export function MoleculeView({ molecule, highlight = null, broken = [], onAtomCl
     })
     return out
   }, [molecule, lit, ghostReach])
+  const outlined = useMemo(() => {
+    if (!outline) return [] as number[]
+    return molecule.groups.find((x) => x.id === outline)?.atoms.filter((i) => molecule.atoms[i]) ?? []
+  }, [molecule, outline])
   const brokenKey = broken.join(',')
   const brokenSet = useMemo(() => new Set(brokenKey ? brokenKey.split(',').map(Number) : []), [brokenKey])
 
@@ -158,6 +173,15 @@ export function MoleculeView({ molecule, highlight = null, broken = [], onAtomCl
               emissive={selected || isBroken || isHot ? '#ffffff' : dim ? ghostOf(colour) : colour}
               emissiveIntensity={isHot ? 0.55 : selected ? 0.45 : isBroken ? 0.6 : dim ? 0.4 : 0.06}
             />
+          </mesh>
+        )
+      })}
+      {outlined.map((i) => {
+        const a = molecule.atoms[i]
+        const r = (elements[a.el]?.radius ?? 0.4) * atomScale
+        return (
+          <mesh key={`o${i}`} geometry={sphere} position={[a.x, a.y, a.z]} scale={r * (1 + OUTLINE_SHARE) + OUTLINE_WIDTH} raycast={noRaycast} renderOrder={-1}>
+            <meshBasicMaterial color={OUTLINE_COLOUR} side={THREE.BackSide} transparent opacity={OUTLINE_OPACITY} depthWrite={false} />
           </mesh>
         )
       })}
