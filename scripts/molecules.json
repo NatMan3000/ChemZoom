@@ -1,49 +1,439 @@
 [
   {
-    "id": "pla-oligomer",
-    "name": "PLA chain piece (3 repeat units)",
-    "smiles": "C[C@H](O)C(=O)O[C@@H](C)C(=O)O[C@@H](C)C(=O)O",
+    "id": "water",
+    "name": "Water",
+    "smiles": "O",
+    "groups": [],
+    "sources": [{ "label": "PubChem: Water (CID 962)", "url": "https://pubchem.ncbi.nlm.nih.gov/compound/962" }]
+  },
+  {
+    "id": "methane",
+    "name": "Methane",
+    "smiles": "C",
+    "groups": [],
+    "sources": [{ "label": "PubChem: Methane (CID 297)", "url": "https://pubchem.ncbi.nlm.nih.gov/compound/297" }]
+  },
+  {
+    "id": "ethane",
+    "name": "Ethane",
+    "smiles": "CC",
     "groups": [
-      { "id": "repeat", "label": "One repeat unit", "kind": "repeat-unit", "smarts": "[CH3][CH](O)C(=O)O", "match": 1 },
-      { "id": "ester", "label": "Ester link", "kind": "functional-group", "smarts": "C(=O)O[CH]", "match": 0 }
+      {
+        "id": "single-bond", "label": "C-C single bond", "kind": "functional-group", "smarts": "[CX4][CX4]",
+        "note": { "simple": "Two carbons sharing one pair of electrons. The ends can spin around this bond.", "deeper": "A sigma bond, about 1.54 angstroms long. Free rotation about it lets saturated chains coil and tangle." }
+      }
     ],
-    "sources": [{ "label": "PubChem: Polylactic acid", "url": "https://pubchem.ncbi.nlm.nih.gov/compound/Polylactic-acid" }]
+    "sources": [
+      { "label": "PubChem: Ethane (CID 6324)", "url": "https://pubchem.ncbi.nlm.nih.gov/compound/6324" },
+      { "label": "Wikipedia: Double bond", "url": "https://en.wikipedia.org/wiki/Double_bond" }
+    ]
+  },
+  {
+    "id": "ethylene",
+    "name": "Ethylene (ethene)",
+    "smiles": "C=C",
+    "groups": [
+      {
+        "id": "double-bond", "label": "C=C double bond", "kind": "functional-group", "smarts": "C=C",
+        "note": { "simple": "Two carbons sharing two pairs of electrons. It holds the molecule flat and stops it twisting.", "deeper": "A sigma bond plus a pi bond, about 1.33 angstroms, shorter than the 1.54 angstrom single bond in ethane. The pi bond can open up so monomers link into a chain: that is how polyethylene, polystyrene and the rubber in ABS are made." }
+      }
+    ],
+    "sources": [
+      { "label": "PubChem: Ethylene (CID 6325)", "url": "https://pubchem.ncbi.nlm.nih.gov/compound/6325" },
+      { "label": "Wikipedia: Double bond", "url": "https://en.wikipedia.org/wiki/Double_bond" }
+    ]
+  },
+  {
+    "id": "benzene",
+    "name": "Benzene",
+    "smiles": "c1ccccc1",
+    "groups": [
+      {
+        "id": "ring", "label": "Benzene ring", "kind": "functional-group", "smarts": "c1ccccc1",
+        "note": { "simple": "Six carbons in a flat hexagon. The electrons are shared all the way around the ring, which makes it very stable.", "deeper": "An aromatic ring: six pi electrons spread evenly over the ring, so every C-C bond is the same length (1.40 angstroms), between a double bond and a single bond. Drawn here with alternating single and double bonds (a Kekule structure)." }
+      }
+    ],
+    "sources": [
+      { "label": "PubChem: Benzene (CID 241)", "url": "https://pubchem.ncbi.nlm.nih.gov/compound/241" },
+      { "label": "Wikipedia: Benzene", "url": "https://en.wikipedia.org/wiki/Benzene" }
+    ]
+  },
+  {
+    "id": "lactic-acid",
+    "name": "Lactic acid (L form)",
+    "smiles": "C[C@H](O)C(=O)O",
+    "groups": [
+      {
+        "id": "acid", "label": "Acid group (COOH)", "kind": "functional-group", "smarts": "C(=O)[OX2H1]",
+        "note": { "simple": "This end is the 'acid' in lactic acid. It can join to the OH end of another lactic acid.", "deeper": "A carboxylic acid. When it reacts with an alcohol (OH) the two lose a water molecule and form an ester link: that is how lactic acid units join into PLA." }
+      },
+      {
+        "id": "hydroxyl", "label": "OH group", "kind": "functional-group", "smarts": "[CH1][OX2H1]",
+        "note": { "simple": "The other joining point. An OH on one lactic acid meets the acid end of the next.", "deeper": "A secondary alcohol on the chiral carbon. Lactic acid is a hydroxy acid: it carries both halves of an ester on the same small molecule." }
+      },
+      {
+        "id": "chiral-carbon", "label": "Left-handed carbon", "kind": "functional-group", "smarts": "[CH3][CH1]([OX2H1])[CX3]",
+        "note": { "simple": "This carbon holds four different things, so lactic acid comes in a left-handed and a right-handed form, like gloves. Bacteria can make almost pure left-handed (L) lactic acid.", "deeper": "The stereocentre is (S) in L-lactic acid. Microbial fermentation can give up to 99.9% L; the ratio of L to D units in PLA largely controls how much of it can crystallise." }
+      }
+    ],
+    "sources": [
+      { "label": "PubChem: L-Lactic acid (CID 107689)", "url": "https://pubchem.ncbi.nlm.nih.gov/compound/107689" },
+      { "label": "Wikipedia: Lactic acid", "url": "https://en.wikipedia.org/wiki/Lactic_acid" }
+    ]
+  },
+  {
+    "id": "lactide",
+    "name": "L-lactide (two lactic acids in a ring)",
+    "smiles": "C[C@H]1C(=O)O[C@H](C(=O)O1)C",
+    "groups": [
+      {
+        "id": "ring", "label": "Six-atom ring", "kind": "functional-group", "smarts": "C1OC(=O)COC1=O",
+        "note": { "simple": "Two lactic acids joined head to tail, twice, so they close into a ring. Factories pop this ring open to grow long PLA chains.", "deeper": "A cyclic diester (a dilactone). Ring-opening polymerisation of lactide, usually with a tin catalyst, is the most common route to high molecular weight PLA." }
+      }
+    ],
+    "sources": [
+      { "label": "PubChem: L-Lactide (CID 107983)", "url": "https://pubchem.ncbi.nlm.nih.gov/compound/107983" },
+      { "label": "Wikipedia: Lactide", "url": "https://en.wikipedia.org/wiki/Lactide" }
+    ]
+  },
+  {
+    "id": "terephthalic-acid",
+    "name": "Terephthalic acid",
+    "smiles": "OC(=O)c1ccc(cc1)C(=O)O",
+    "groups": [
+      {
+        "id": "ring", "label": "Benzene ring", "kind": "functional-group", "smarts": "c1ccccc1",
+        "note": { "simple": "A stiff, flat ring in the middle. It is what makes PET and PETG rigid.", "deeper": "A para-disubstituted benzene ring: the two acid groups point in opposite directions, so the chain runs straight through the ring." }
+      },
+      {
+        "id": "acid", "label": "Acid group (COOH)", "kind": "functional-group", "smarts": "C(=O)[OX2H1]",
+        "note": { "simple": "One of two joining points, one at each end.", "deeper": "A carboxylic acid; it forms an ester with a diol such as ethylene glycol or CHDM." }
+      }
+    ],
+    "sources": [{ "label": "PubChem: Terephthalic acid (CID 7489)", "url": "https://pubchem.ncbi.nlm.nih.gov/compound/7489" }]
+  },
+  {
+    "id": "ethylene-glycol",
+    "name": "Ethylene glycol",
+    "smiles": "OCCO",
+    "groups": [
+      {
+        "id": "hydroxyl", "label": "OH group", "kind": "functional-group", "smarts": "[CH2][OX2H1]",
+        "note": { "simple": "A joining point. Ethylene glycol has one at each end, so it can link two acids.", "deeper": "A primary alcohol. A diol (two OH groups) plus a diacid gives a polyester." }
+      }
+    ],
+    "sources": [{ "label": "PubChem: Ethylene glycol (CID 174)", "url": "https://pubchem.ncbi.nlm.nih.gov/compound/174" }]
+  },
+  {
+    "id": "chdm",
+    "name": "CHDM (cyclohexanedimethanol)",
+    "smiles": "OCC1CCC(CC1)CO",
+    "groups": [
+      {
+        "id": "ring", "label": "Bulky cyclohexane ring", "kind": "functional-group", "smarts": "C1CCCCC1",
+        "note": { "simple": "A big puckered ring of six carbons. Swapped in for some of the small ethylene glycol, it stops the chains lining up neatly.", "deeper": "1,4-cyclohexanedimethanol has six more carbons than the ethylene glycol it replaces, so it does not fit the PET crystal: crystallisation is disrupted and the melting point drops. That glycol modification is the G in PETG." }
+      },
+      {
+        "id": "hydroxyl", "label": "OH group", "kind": "functional-group", "smarts": "[CH2][OX2H1]",
+        "note": { "simple": "One of two joining points.", "deeper": "A primary alcohol; CHDM is a diol, like ethylene glycol." }
+      }
+    ],
+    "sources": [
+      { "label": "PubChem: 1,4-Cyclohexanedimethanol (CID 7735)", "url": "https://pubchem.ncbi.nlm.nih.gov/compound/7735" },
+      { "label": "Wikipedia: Polyethylene terephthalate (PETG section)", "url": "https://en.wikipedia.org/wiki/Polyethylene_terephthalate#PETG" }
+    ]
+  },
+  {
+    "id": "mdi",
+    "name": "MDI (methylene diphenyl diisocyanate)",
+    "smiles": "O=C=Nc1ccc(cc1)Cc1ccc(cc1)N=C=O",
+    "groups": [
+      {
+        "id": "isocyanate", "label": "Isocyanate group (N=C=O)", "kind": "functional-group", "smarts": "N=C=O",
+        "note": { "simple": "A very eager joining point. It grabs the OH end of a diol and makes a urethane link.", "deeper": "Isocyanates react with alcohols by addition (no water given off) to form carbamates, called urethanes. MDI has two, so it can link two diols." }
+      },
+      {
+        "id": "ring", "label": "Benzene ring", "kind": "functional-group", "smarts": "c1ccccc1",
+        "note": { "simple": "One of two stiff rings that make the hard part of TPU hard.", "deeper": "Aromatic diisocyanates such as MDI are cheap and reactive; polyurethanes made from them tend to darken in sunlight." }
+      }
+    ],
+    "sources": [
+      { "label": "PubChem: 4,4'-Methylenediphenyl diisocyanate (CID 7570)", "url": "https://pubchem.ncbi.nlm.nih.gov/compound/7570" },
+      { "label": "Wikipedia: Polyurethane", "url": "https://en.wikipedia.org/wiki/Polyurethane" }
+    ]
+  },
+  {
+    "id": "butanediol",
+    "name": "1,4-Butanediol",
+    "smiles": "OCCCCO",
+    "groups": [
+      {
+        "id": "hydroxyl", "label": "OH group", "kind": "functional-group", "smarts": "[CH2][OX2H1]",
+        "note": { "simple": "A joining point at each end. Butanediol is short, so it links MDI molecules into tight, stiff hard segments.", "deeper": "In TPU it is the chain extender: a short diol that reacts with diisocyanate to build the hard segments." }
+      }
+    ],
+    "sources": [{ "label": "PubChem: 1,4-Butanediol (CID 8064)", "url": "https://pubchem.ncbi.nlm.nih.gov/compound/8064" }]
+  },
+  {
+    "id": "acrylonitrile",
+    "name": "Acrylonitrile",
+    "smiles": "C=CC#N",
+    "groups": [
+      {
+        "id": "vinyl", "label": "C=C double bond", "kind": "functional-group", "smarts": "C=C",
+        "note": { "simple": "This double bond opens up so the molecule can join a chain.", "deeper": "A vinyl group; it polymerises by chain growth (free radical) with styrene." }
+      },
+      {
+        "id": "nitrile", "label": "Nitrile group (C triple bond N)", "kind": "functional-group", "smarts": "C#N",
+        "note": { "simple": "A carbon and a nitrogen joined by three bonds. Nitriles on neighbouring chains pull on each other, which makes the plastic stiffer and tougher.", "deeper": "The C-N triple bond is strongly polar; dipole attraction between nitrile groups binds SAN chains together and raises heat and chemical resistance." }
+      }
+    ],
+    "sources": [{ "label": "PubChem: Acrylonitrile (CID 7855)", "url": "https://pubchem.ncbi.nlm.nih.gov/compound/7855" }]
+  },
+  {
+    "id": "butadiene",
+    "name": "1,3-Butadiene",
+    "smiles": "C=CC=C",
+    "groups": [
+      {
+        "id": "double-bond", "label": "C=C double bond", "kind": "functional-group", "smarts": "C=C",
+        "note": { "simple": "Butadiene has two double bonds. When it joins a chain one of them opens up, and the other one stays in the chain.", "deeper": "A conjugated diene. 1,4 addition leaves one C=C in every repeat unit of polybutadiene, which keeps the rubber soft but leaves it open to attack by oxygen, ozone and sunlight." }
+      }
+    ],
+    "sources": [
+      { "label": "PubChem: 1,3-Butadiene (CID 7845)", "url": "https://pubchem.ncbi.nlm.nih.gov/compound/7845" },
+      { "label": "Wikipedia: Polybutadiene", "url": "https://en.wikipedia.org/wiki/Polybutadiene" }
+    ]
+  },
+  {
+    "id": "styrene",
+    "name": "Styrene",
+    "smiles": "C=Cc1ccccc1",
+    "groups": [
+      {
+        "id": "vinyl", "label": "C=C double bond", "kind": "functional-group", "smarts": "C=C",
+        "note": { "simple": "This double bond opens up so the molecule can join a chain.", "deeper": "A vinyl group; it polymerises by chain growth with acrylonitrile to make SAN." }
+      },
+      {
+        "id": "ring", "label": "Benzene ring", "kind": "functional-group", "smarts": "c1ccccc1",
+        "note": { "simple": "A bulky flat ring hanging off the chain. It makes the plastic hard and glassy.", "deeper": "The phenyl side group adds hardness and rigidity; styrene also gives ABS its shiny surface." }
+      }
+    ],
+    "sources": [{ "label": "PubChem: Styrene (CID 7501)", "url": "https://pubchem.ncbi.nlm.nih.gov/compound/7501" }]
+  },
+  {
+    "id": "butyl-acrylate",
+    "name": "Butyl acrylate",
+    "smiles": "C=CC(=O)OCCCC",
+    "groups": [
+      {
+        "id": "vinyl", "label": "C=C double bond", "kind": "functional-group", "smarts": "C=C",
+        "note": { "simple": "This is the only double bond, and it is used up when the molecule joins a chain. The rubber it makes has no C=C left for sunlight to attack.", "deeper": "The vinyl group polymerises to a saturated backbone, unlike butadiene, whose second double bond stays in the rubber." }
+      },
+      {
+        "id": "ester", "label": "Ester side group", "kind": "functional-group", "smarts": "C(=O)O[CH2]",
+        "note": { "simple": "A side arm ending in a four-carbon tail.", "deeper": "n-Butyl acrylate is the usual monomer for the acrylate rubber in ASA." }
+      }
+    ],
+    "sources": [
+      { "label": "PubChem: Butyl acrylate (CID 8846)", "url": "https://pubchem.ncbi.nlm.nih.gov/compound/8846" },
+      { "label": "Wikipedia: Acrylonitrile styrene acrylate", "url": "https://en.wikipedia.org/wiki/Acrylonitrile_styrene_acrylate" }
+    ]
+  },
+  {
+    "id": "pla-oligomer",
+    "name": "PLA chain piece (4 L-lactic acid units)",
+    "smiles": "C[C@H](O)C(=O)O[C@@H](C)C(=O)O[C@@H](C)C(=O)O[C@@H](C)C(=O)O",
+    "groups": [
+      {
+        "id": "repeat", "label": "One repeat unit (from one lactic acid)", "kind": "repeat-unit", "smarts": "[OX2][CH1]([CH3])[CX3](=O)", "match": 1,
+        "note": { "simple": "One lactic acid, minus the water it lost when it joined on. A PLA chain is a very long row of these.", "deeper": "-O-CH(CH3)-C(=O)-, formula C3H4O2. Every stereocentre here is (S), as in poly(L-lactide)." }
+      },
+      {
+        "id": "ester", "label": "Ester link", "kind": "functional-group", "smarts": "[CX3](=O)[OX2][CH1]", "match": 1,
+        "note": { "simple": "The link that holds each piece to the next. Water can slowly break it, faster when it is hot.", "deeper": "PLA is a polyester and degrades mainly by hydrolysis: water cuts the ester link and shortens the chain. Hydrolysis is also the first step when PLA breaks down in an industrial composter." }
+      },
+      {
+        "id": "methyl", "label": "Methyl side group (CH3)", "kind": "functional-group", "smarts": "[CH3;$([CH3][CH1]([OX2])C=O)]", "match": 1,
+        "note": { "simple": "A small bump on every unit. Because they all point the same way, the chains can fold into neat crystal patches.", "deeper": "In poly(L-lactide) every methyl sits on an (S) carbon; the regular stereochemistry is what lets PLA crystallise. Mixing in D units makes it more amorphous." }
+      }
+    ],
+    "sources": [
+      { "label": "PubChem: L-Lactic acid (CID 107689)", "url": "https://pubchem.ncbi.nlm.nih.gov/compound/107689" },
+      { "label": "Wikipedia: Polylactic acid", "url": "https://en.wikipedia.org/wiki/Polylactic_acid" }
+    ]
   },
   {
     "id": "petg-oligomer",
-    "name": "PETG chain piece (PET unit + CHDM unit)",
-    "smiles": "OCCOC(=O)c1ccc(cc1)C(=O)OCC1CCC(CC1)COC(=O)c1ccc(cc1)C(=O)O",
+    "name": "PETG chain piece (two PET units and one CHDM unit)",
+    "smiles": "OCCOC(=O)c1ccc(cc1)C(=O)OCCOC(=O)c1ccc(cc1)C(=O)OCC1CCC(CC1)COC(=O)c1ccc(cc1)C(=O)O",
     "groups": [
-      { "id": "repeat", "label": "One PET repeat unit", "kind": "repeat-unit", "smarts": "OCCOC(=O)c1ccc(cc1)C(=O)", "match": 0 },
-      { "id": "chdm", "label": "The bulky CHDM ring", "kind": "functional-group", "smarts": "C1CCC(CC1)", "match": 0 }
+      {
+        "id": "repeat", "label": "One PET repeat unit", "kind": "repeat-unit", "smarts": "[OX2][CH2][CH2][OX2]C(=O)c1ccc(cc1)C(=O)", "match": 1,
+        "note": { "simple": "Ethylene glycol plus terephthalic acid: the same unit drink bottles are made of.", "deeper": "-O-CH2-CH2-O-C(=O)-C6H4-C(=O)-, formula C10H8O4. In PETG some of these are swapped for the CHDM version." }
+      },
+      {
+        "id": "chdm", "label": "The bulky CHDM ring", "kind": "functional-group", "smarts": "[CH2]C1CCC(CC1)[CH2]",
+        "note": { "simple": "The extra ingredient that makes PET into PETG. Its big ring sticks out, so chains cannot pack into crystals.", "deeper": "1,4-cyclohexanedimethanol replaces part of the ethylene glycol. It is six carbons bigger, disrupts crystallisation and leaves PETG a clear amorphous plastic." }
+      },
+      {
+        "id": "ester", "label": "Ester link", "kind": "functional-group", "smarts": "[CX3](=O)[OX2][CH2]", "match": 0,
+        "note": { "simple": "The link between the acid and the glycol. Water plus heat can cut it, which is why wet PETG strings and pops.", "deeper": "PET is hygroscopic: moisture in the melt hydrolyses ester links, shortening the chains." }
+      },
+      {
+        "id": "benzene-ring", "label": "Benzene ring", "kind": "functional-group", "smarts": "c1ccc(cc1)", "match": 0,
+        "note": { "simple": "The stiff flat ring from terephthalic acid. It is what makes PETG rigid.", "deeper": "The para-phenylene ring in the backbone gives PET and PETG their stiffness and a glass transition well above room temperature." }
+      }
     ],
-    "sources": []
+    "sources": [
+      { "label": "PubChem: Terephthalic acid (CID 7489)", "url": "https://pubchem.ncbi.nlm.nih.gov/compound/7489" },
+      { "label": "PubChem: 1,4-Cyclohexanedimethanol (CID 7735)", "url": "https://pubchem.ncbi.nlm.nih.gov/compound/7735" },
+      { "label": "Wikipedia: Polyethylene terephthalate (PETG section)", "url": "https://en.wikipedia.org/wiki/Polyethylene_terephthalate#PETG" }
+    ]
   },
   {
     "id": "tpu-hard",
-    "name": "TPU hard segment (MDI + butanediol)",
-    "smiles": "OCCCCOC(=O)Nc1ccc(cc1)Cc1ccc(cc1)NC(=O)OCCCCO",
+    "name": "TPU hard segment (MDI joined by butanediol)",
+    "smiles": "OCCCCOC(=O)Nc1ccc(cc1)Cc1ccc(cc1)NC(=O)OCCCCOC(=O)Nc1ccc(cc1)Cc1ccc(cc1)NC(=O)OCCCCO",
     "groups": [
-      { "id": "urethane", "label": "Urethane link", "kind": "functional-group", "smarts": "NC(=O)O", "match": 0 }
+      {
+        "id": "repeat", "label": "One hard-segment repeat unit (MDI + butanediol)", "kind": "repeat-unit", "smarts": "C(=O)[NH]c1ccc(cc1)[CH2]c1ccc(cc1)[NH]C(=O)[OX2][CH2][CH2][CH2][CH2][OX2]", "match": 0,
+        "note": { "simple": "One MDI joined to one butanediol. A few of these in a row make a hard segment.", "deeper": "-C(=O)NH-C6H4-CH2-C6H4-NH-C(=O)-O-(CH2)4-O-, formula C19H20N2O4 (one MDI plus one butanediol, nothing lost when they join)." }
+      },
+      {
+        "id": "urethane", "label": "Urethane link", "kind": "functional-group", "smarts": "[NH]C(=O)[OX2]", "match": 0,
+        "note": { "simple": "The link that gives polyurethane its name. Its N-H on one chain grips the C=O on the next, so hard segments stick together.", "deeper": "A carbamate (-NH-C(=O)-O-). Hydrogen bonds between urethane groups pull the hard segments into ordered domains that act as physical cross-links." }
+      },
+      {
+        "id": "benzene-ring", "label": "Benzene ring (from MDI)", "kind": "functional-group", "smarts": "c1ccc(cc1)", "match": 0,
+        "note": { "simple": "Stiff rings from MDI. They help the hard segments stack.", "deeper": "Aromatic hard segments pack well and melt high; Bambu measures the TPU 95A HF melt at 183 degrees C by DSC." }
+      }
     ],
-    "sources": []
+    "sources": [
+      { "label": "PubChem: MDI (CID 7570)", "url": "https://pubchem.ncbi.nlm.nih.gov/compound/7570" },
+      { "label": "PubChem: 1,4-Butanediol (CID 8064)", "url": "https://pubchem.ncbi.nlm.nih.gov/compound/8064" },
+      { "label": "Wikipedia: Polyurethane", "url": "https://en.wikipedia.org/wiki/Polyurethane" }
+    ]
+  },
+  {
+    "id": "tpu-soft",
+    "name": "TPU soft segment piece (PTMEG, 4 units)",
+    "smiles": "OCCCCOCCCCOCCCCOCCCCO",
+    "groups": [
+      {
+        "id": "repeat", "label": "One soft-segment unit", "kind": "repeat-unit", "smarts": "[OX2;$([OX2]([CH2])[CH2])][CH2][CH2][CH2][CH2]", "match": 1,
+        "note": { "simple": "Four carbons and an oxygen. Dozens of these make a long, floppy soft segment that coils up like a spring.", "deeper": "-O-(CH2)4-, from poly(tetramethylene ether) glycol (PTMEG), made from tetrahydrofuran. In MDI, butanediol and PTMEG elastomers the glass transition sits around -55 to -46 degrees C, so the soft segments stay rubbery in any weather." }
+      },
+      {
+        "id": "ether", "label": "Ether link (C-O-C)", "kind": "functional-group", "smarts": "[CH2][OX2][CH2]", "match": 1,
+        "note": { "simple": "An oxygen holding two carbons. Bonds can swivel freely here, so the chain stays bendy.", "deeper": "Polyether soft segments resist hydrolysis much better than polyester ones, which is one reason some TPUs are polyether based." }
+      }
+    ],
+    "sources": [
+      { "label": "Wikipedia: Thermoplastic polyurethane", "url": "https://en.wikipedia.org/wiki/Thermoplastic_polyurethane" },
+      { "label": "Wikipedia: Polyurethane", "url": "https://en.wikipedia.org/wiki/Polyurethane" },
+      { "label": "Jin et al. 2020, Materials 13:4991 (MDI/BDO/PTMEG elastomers)", "url": "https://doi.org/10.3390/ma13214991" }
+    ]
   },
   {
     "id": "abs-oligomer",
-    "name": "ABS chain piece (acrylonitrile + butadiene + styrene)",
-    "smiles": "CC(C#N)CC/C=C/CCC(c1ccccc1)C",
+    "name": "ABS piece (a SAN branch grafted onto butadiene rubber)",
+    "smiles": "C/C=C\\CC(CC(c1ccccc1)CC(C#N)CCc1ccccc1)/C=C\\CC/C=C\\C",
     "groups": [
-      { "id": "double-bond", "label": "C=C double bond in the rubber", "kind": "weak-spot", "smarts": "C=C", "match": 0 }
+      {
+        "id": "repeat", "label": "One styrene unit", "kind": "repeat-unit", "smarts": "[CH2][CH1](c1ccccc1)", "match": 0,
+        "note": { "simple": "Styrene is the most common building block in ABS (about half of it). This is one styrene after joining the chain.", "deeper": "-CH2-CH(C6H5)-. ABS is a terpolymer, so there is no single repeat unit: typical grades are 40 to 60% styrene, 15 to 35% acrylonitrile and 5 to 30% butadiene." }
+      },
+      {
+        "id": "double-bond", "label": "C=C double bond in the rubber", "kind": "weak-spot", "smarts": "[CH]=[CH]", "match": 1,
+        "note": { "simple": "Every butadiene unit keeps one double bond. Sunlight and oxygen attack here, the rubber goes hard and the part turns yellow and brittle.", "deeper": "Photo-oxidation of ABS starts in the polybutadiene phase: the C=C content drops and carbonyl groups form there before they appear in the SAN (Sabatini et al. 2023)." }
+      },
+      {
+        "id": "butadiene-unit", "label": "One butadiene unit (the rubber)", "kind": "monomer", "smarts": "[CX4][CH]=[CH][CX4]", "match": 2,
+        "note": { "simple": "Four carbons with a double bond in the middle. Long chains of these make the soft rubber blobs that stop ABS shattering.", "deeper": "A cis-1,4 polybutadiene unit, -CH2-CH=CH-CH2-. The SAN branch above grows off this rubber chain (grafting), which glues the rubber blobs into the glassy matrix." }
+      },
+      {
+        "id": "nitrile", "label": "Nitrile group (from acrylonitrile)", "kind": "functional-group", "smarts": "C#N", "match": 0,
+        "note": { "simple": "Nitriles on neighbouring chains pull on each other, making ABS stronger than plain polystyrene.", "deeper": "Polar C-N triple bonds; acrylonitrile adds chemical resistance, hardness and a higher heat deflection temperature." }
+      },
+      {
+        "id": "benzene-ring", "label": "Benzene ring (from styrene)", "kind": "functional-group", "smarts": "c1ccccc1", "match": 0,
+        "note": { "simple": "The bulky ring that makes the glassy part hard and shiny.", "deeper": "Phenyl side groups stiffen the SAN chains." }
+      }
     ],
-    "sources": []
+    "sources": [
+      { "label": "Wikipedia: Acrylonitrile butadiene styrene", "url": "https://en.wikipedia.org/wiki/Acrylonitrile_butadiene_styrene" },
+      { "label": "Sabatini et al. 2023, Polymers 15:3267 (light-stability of ABS in LEGO bricks)", "url": "https://doi.org/10.3390/polym15153267" },
+      { "label": "PubChem: 1,3-Butadiene (CID 7845)", "url": "https://pubchem.ncbi.nlm.nih.gov/compound/7845" }
+    ]
+  },
+  {
+    "id": "abs-rubber",
+    "name": "ABS rubber piece (cis-polybutadiene, 4 units)",
+    "smiles": "C/C=C\\CC/C=C\\CC/C=C\\CC/C=C\\C",
+    "groups": [
+      {
+        "id": "repeat", "label": "One butadiene unit", "kind": "repeat-unit", "smarts": "[CX4][CH]=[CH][CX4]", "match": 1,
+        "note": { "simple": "Four carbons with one double bond left over from butadiene.", "deeper": "-CH2-CH=CH-CH2-, cis-1,4. The cis kink stops the chains packing, so the rubber stays soft and stretchy." }
+      },
+      {
+        "id": "double-bond", "label": "C=C double bond", "kind": "weak-spot", "smarts": "[CH]=[CH]", "match": 1,
+        "note": { "simple": "The weak spot. Every unit has one, so there are lots of places for sunlight and oxygen to attack.", "deeper": "Unsaturated rubbers such as polybutadiene are among the most sensitive to ozone and photo-oxidation, because there is a C=C in every repeat unit." }
+      }
+    ],
+    "sources": [
+      { "label": "Wikipedia: Polybutadiene", "url": "https://en.wikipedia.org/wiki/Polybutadiene" },
+      { "label": "Wikipedia: Polymer degradation", "url": "https://en.wikipedia.org/wiki/Polymer_degradation" }
+    ]
   },
   {
     "id": "asa-oligomer",
-    "name": "ASA chain piece (acrylonitrile + styrene + butyl acrylate)",
-    "smiles": "CC(C#N)CC(C(=O)OCCCC)CC(c1ccccc1)C",
+    "name": "ASA piece (a SAN branch grafted onto acrylate rubber)",
+    "smiles": "CCC(C(=O)OCCCC)CC(C(=O)OCCCC)(CC(c1ccccc1)CC(C#N)CCc1ccccc1)CC(C)C(=O)OCCCC",
     "groups": [
-      { "id": "acrylate", "label": "Acrylate side group", "kind": "functional-group", "smarts": "C(=O)OCCCC", "match": 0 }
+      {
+        "id": "repeat", "label": "One styrene unit", "kind": "repeat-unit", "smarts": "[CH2][CH1](c1ccccc1)", "match": 0,
+        "note": { "simple": "Styrene is the main building block of the glassy part of ASA, just as in ABS.", "deeper": "-CH2-CH(C6H5)-. The glassy matrix is the same styrene-acrylonitrile copolymer (SAN) as in ABS; only the rubber differs." }
+      },
+      {
+        "id": "acrylate", "label": "Acrylate side group (butyl ester)", "kind": "functional-group", "smarts": "C(=O)O[CH2][CH2][CH2][CH3]", "match": 1,
+        "note": { "simple": "The rubber in ASA is made of butyl acrylate. Its backbone has only single bonds, so sunlight has no C=C to snap.", "deeper": "Poly(n-butyl acrylate) rubber has no backbone double bonds, which gives ASA about ten times the weathering and UV resistance of ABS." }
+      },
+      {
+        "id": "butyl-acrylate-unit", "label": "One butyl acrylate unit (the rubber)", "kind": "monomer", "smarts": "[CH2][CH1]C(=O)O[CH2][CH2][CH2][CH3]", "match": 0,
+        "note": { "simple": "One rubber building block: a single-bonded backbone piece with a floppy side arm.", "deeper": "-CH2-CH(COOC4H9)-. The SAN branch grows off a rubber chain like this one (grafting), anchoring the rubber blobs in the glassy matrix." }
+      },
+      {
+        "id": "nitrile", "label": "Nitrile group (from acrylonitrile)", "kind": "functional-group", "smarts": "C#N", "match": 0,
+        "note": { "simple": "Nitriles on neighbouring chains pull on each other and make the plastic tougher.", "deeper": "The same polar nitrile groups as in ABS." }
+      },
+      {
+        "id": "benzene-ring", "label": "Benzene ring (from styrene)", "kind": "functional-group", "smarts": "c1ccccc1", "match": 0,
+        "note": { "simple": "The bulky ring that makes the glassy part hard.", "deeper": "Phenyl side groups stiffen the SAN chains." }
+      }
     ],
-    "sources": []
+    "sources": [
+      { "label": "Wikipedia: Acrylonitrile styrene acrylate", "url": "https://en.wikipedia.org/wiki/Acrylonitrile_styrene_acrylate" },
+      { "label": "PubChem: Butyl acrylate (CID 8846)", "url": "https://pubchem.ncbi.nlm.nih.gov/compound/8846" }
+    ]
+  },
+  {
+    "id": "asa-rubber",
+    "name": "ASA rubber piece (poly(butyl acrylate), 3 units)",
+    "smiles": "CCC(C(=O)OCCCC)CC(C(=O)OCCCC)CC(C)C(=O)OCCCC",
+    "groups": [
+      {
+        "id": "repeat", "label": "One butyl acrylate unit", "kind": "repeat-unit", "smarts": "[CH2][CH1;$([CH1]([CH2][CH1]C=O)[CH2][CH1]C=O)]C(=O)O[CH2][CH2][CH2][CH3]", "match": 0,
+        "note": { "simple": "One rubber building block. Notice the backbone: single bonds only.", "deeper": "-CH2-CH(COOC4H9)-, formula C7H12O2." }
+      },
+      {
+        "id": "acrylate", "label": "Acrylate side group (butyl ester)", "kind": "functional-group", "smarts": "C(=O)O[CH2][CH2][CH2][CH3]", "match": 1,
+        "note": { "simple": "The floppy side arm that keeps this rubber soft. There is no C=C anywhere for sunlight to break.", "deeper": "Acrylate rubber differs from butadiene rubber by the absence of double bonds." }
+      }
+    ],
+    "sources": [
+      { "label": "Wikipedia: Acrylonitrile styrene acrylate", "url": "https://en.wikipedia.org/wiki/Acrylonitrile_styrene_acrylate" },
+      { "label": "PubChem: Butyl acrylate (CID 8846)", "url": "https://pubchem.ncbi.nlm.nih.gov/compound/8846" }
+    ]
   }
 ]

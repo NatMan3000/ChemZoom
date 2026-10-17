@@ -30,7 +30,11 @@ def embed(smiles: str) -> Chem.Mol:
     params = AllChem.ETKDGv3()
     params.randomSeed = SEED
     if AllChem.EmbedMolecule(mol, params) != 0:
-        raise RuntimeError(f"embed failed: {smiles}")
+        # Crowded branched pieces (a quaternary graft point) can defeat the default
+        # eigenvalue start; random starting coordinates still converge, same seed.
+        params.useRandomCoords = True
+        if AllChem.EmbedMolecule(mol, params) != 0:
+            raise RuntimeError(f"embed failed: {smiles}")
     AllChem.MMFFOptimizeMolecule(mol, maxIters=2000)
     return mol
 

@@ -1,0 +1,1 @@
+{"id":"water","name":"Water","formula":"H2O","smiles":"O","atoms":[{"el":"O","x":0.005,"y":0.398,"z":0.0},{"el":"H","x":-0.766,"y":-0.189,"z":0.0},{"el":"H","x":0.761,"y":-0.209,"z":0.0}],"bonds":[{"a":0,"b":1,"order":1},{"a":0,"b":2,"order":1}],"groups":[],"sources":[{"label":"PubChem: Water (CID 962)","url":"https://pubchem.ncbi.nlm.nih.gov/compound/962"}]}

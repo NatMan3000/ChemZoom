@@ -22,7 +22,10 @@ export const collections: Collection[] = [
   {
     id: 'filaments',
     title: '3D printing filaments',
-    blurb: { simple: 'What is actually inside the plastic you print with, and why each one behaves differently.' },
+    blurb: {
+      simple: 'What is actually inside the plastic you print with, and why each one behaves differently.',
+      deeper: 'Five polymers, from a plant-based polyester to rubber-toughened plastics: their building blocks, how the chains pack, and how that explains warping, stringing, heat and sunlight.',
+    },
     materials: ['pla', 'petg', 'tpu', 'abs', 'asa'],
   },
 ]
