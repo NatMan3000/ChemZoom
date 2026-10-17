@@ -37,7 +37,9 @@ No lines yet.
 
 ## 3. Judgement calls
 
-No lines yet.
+- **P7 - The bottom of the zoom is one atom, and how atoms join.** Zoom into one atom: nucleus, electrons, bonds (D10, 17 Oct, picked option), and "Yes, we want to learn about atoms too and how they join together to form the molecules" (D10 note). Why: the app promises "down to the atoms"; stopping at a molecule leaves the last step of the story untold, and showing the whole molecule again at the atom step (the v1 behaviour) zooms out instead of in.
+  Means: the last zoom level is a single atom (the one tapped at the molecule level, a backbone carbon by default): its nucleus with protons and neutrons, its electrons, and its bonds shown as electrons shared with the neighbouring atoms, so the reader sees how atoms join into the molecule above.
+  Test: the atom level shows one atom filling the view with its nucleus and electrons visible, its bonds lead out to faded neighbours with the shared electrons drawn on them, and nothing at the atom level is a whole molecule.
 
 ## 4. Words and numbers
 
@@ -82,4 +84,4 @@ P lines come from the intent questionnaire of 17 Oct 2026 (`drafts/intent-questi
 
 ## Id index
 
-- **P1** section 1 · **P2** section 1 · **P3** section 1 · **P4** section 1 · **P5** section 5 · **P6** section 5
+- **P1** section 1 · **P2** section 1 · **P3** section 1 · **P4** section 1 · **P5** section 5 · **P6** section 5 · **P7** section 3
