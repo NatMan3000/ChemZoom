@@ -1,11 +1,12 @@
 ---
 type: auto
 session_id: 9c44e8b5-1de3-4d92-abaa-3a2228aee2a3
+session_ids: [623df386-433e-5dba-b631-5788ece05345, 9c44e8b5-1de3-4d92-abaa-3a2228aee2a3]
 project: ChemZoom
 date: 2026-10-17
 topic: ChemZoom created, v1 shipped, DesignPass on the PLA reference page
 duration: "8 hours"
-events: 1143
+events: 1484
 events_unit: turns
 ---
 
@@ -67,3 +68,11 @@ Nathan asked for an app to understand what 3D printing filaments are made of, wi
 
 - ChemZoom main at aa642fc, pushed to Forgejo; GitHub main (live Pages) deliberately at 5b909ea (v1). Lane worktrees and `cut/*` branches removed. This log and the timeline row are committed and pushed to Forgejo only.
 - `~/.claude`: 039864cc (DesignPass gotcha) committed.
+
+## Continued - 2026-10-17
+
+Chain bookkeeping only (dream cycle 18 Oct): this process's earlier segment 623df386 (Microsoft sign-in broker) is logged in Kai at `~/.claude/sessions/2026-10-15-entra-signin-broker-kai-canary-auth.md`; the small tail past the original count is the EndSession wrap-up already reflected above. No new ChemZoom work.
+
+### Segment - Microsoft sign-in broker (Kai)
+**Restart ID:** `claude -r 623df386-433e-5dba-b631-5788ece05345`
+- Logged in full in the Kai log above; not repeated here.
