@@ -11,6 +11,7 @@
 
 A 3D chemistry explorer for Nathan and Josh. Zoom from a spool of 3D printing filament down to its atoms and see why PLA, PETG, TPU, ABS and ASA behave differently. Built to grow into other chemistry topics. Live on GitHub Pages: https://natman3000.github.io/ChemZoom/
 
+- `spec/design-intent.md` - what every page is for in Nathan's words (P lines with tests), the editor pass; read it before changing words, layout or a control. Desktop rules: `spec/desktop-standard.md`.
 - Who and why: `PRODUCT.md`. Look and motion: `DESIGN.md`. v1 build plan and lanes: `plans/build-chemzoom-COMPLETED.md`.
 - `TIMELINE.md`: grep on demand. `open-threads.md`: surfaced at session start.
 

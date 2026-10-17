@@ -2,7 +2,7 @@
 
 ## Who it is for
 
-Nathan (adult, technical, prints a lot on a Bambu Lab P2S) and his son Josh (12). They print with PLA, PETG, TPU, ABS and ASA and want to understand what those plastics actually are and why they behave differently. Both use it together and separately: on the Mac, an iPad, a phone, and Josh's Windows PC at his place.
+Nathan (adult, technical, prints a lot on a Bambu Lab P2S) and his son Josh (12). They print with PLA, PETG, TPU, ABS and ASA and want to understand what those plastics actually are and why they behave differently. Both use it together and separately, on a desktop and on a phone (`spec/design-intent.md` P2, which holds Nathan's own answers on who it is for and how it should feel; where the two disagree, that file wins).
 
 ## The job
 
@@ -10,7 +10,7 @@ Make the invisible visible. Zoom from a spool of filament down to the atoms, see
 
 ## Register
 
-A science museum exhibit you can touch, not a textbook and not a kids' game. Pitched so a curious 12-year-old gets every line on the first read; every card has a "Go deeper" layer with the real names and numbers for the adult. Australian English.
+A science museum exhibit you can touch, not a textbook and not a kids' game. Pitched so a curious 12-year-old gets every line on the first read; a deeper layer with the real names and numbers for the adult, behind one app-wide simple/deeper switch (`spec/design-intent.md` P10). Australian English.
 
 ## Must be true
 

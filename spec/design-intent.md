@@ -31,6 +31,10 @@ Each entry carries its id, his words, the why and a test a stranger could apply 
   Means: the material page is still worked first as the reference page, but compare, basics, sources, home and the experiments are all in scope for the pass and signed off to the same bar.
   Test: no page in the app is listed as "rough for now" in the sign-off; every route has a sign-off shot at both widths (P2).
 
+- **P13 - Success is Josh asking for the next filament.** He asks for the next filament (D16, 17 Oct, picked the guess: "Can we add nylon? And carbon fibre?"). Why: an app he comes back to and wants extended is one that worked; one he finished and forgot did not.
+  Means: the end of every material's journey points at what else there is to explore, and adding a filament stays a data change (`src/content`, `scripts/molecules.json`), never a rebuild.
+  Test: a new material appears on every page (home, zoom, experiments, compare, sources) by adding its data alone, and each material page ends with a way on to another material.
+
 ## 2. The never list
 
 No lines yet.
@@ -102,4 +106,4 @@ P lines come from the intent questionnaire of 17 Oct 2026 (`drafts/intent-questi
 
 ## Id index
 
-- **P1** section 1 · **P2** section 1 · **P3** section 1 · **P4** section 1 · **P5** section 5 · **P6** section 5 · **P7** section 3 · **P8** section 3 · **P9** section 3 · **P10** section 3 · **P11** section 7 · **P12** section 7
+- **P1** section 1 · **P2** section 1 · **P3** section 1 · **P4** section 1 · **P13** section 1 · **P5** section 5 · **P6** section 5 · **P7** section 3 · **P8** section 3 · **P9** section 3 · **P10** section 3 · **P11** section 7 · **P12** section 7

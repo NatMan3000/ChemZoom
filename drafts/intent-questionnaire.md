@@ -3,7 +3,7 @@ type: notes
 title: Intent questionnaire - Nathan and Kai, 17 Oct 2026
 description: 12 questions to turn Nathan's intent for ChemZoom into spec/design-intent.md before the DesignPass reference page. Kai's guess sits under each question so he confirms or corrects rather than starting cold.
 created: 2026-10-17
-status: draft
+status: answered (17 Oct 2026 on Nexus cards D5 to D16; written to spec/design-intent.md as P1 to P13)
 ---
 
 # Intent questionnaire

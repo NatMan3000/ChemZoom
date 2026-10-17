@@ -14,7 +14,16 @@ Surface: desktop, 1920x1080 CSS pixels (Nathan's 4K screen at 2x). Started 17 Oc
 
 ## Decisions
 
-Calls are recorded here as they are made, with Nathan's words and the reason, before any worker is briefed. Pending: the intent questionnaire D5 to D16 (`drafts/intent-questionnaire.md`), in particular D9 (panel), D10 (atom step), D12 (experiments placement) and D13 (one depth switch).
+Recorded with Nathan's words before any worker is briefed. The intent answers (17 Oct, D5 to D16) live in `spec/design-intent.md`; the ones that set rules for this width:
+
+- **Panel fits one screen** (P5, D9): "we have to scroll down nearly a whole page". How (wider panel, collapsing sections, tighter text) is settled on the reference page.
+- **One continuous zoom** (P6, D9): wheel, trackpad or pinch carries the view from spool to atom and back; the rail and panel follow the zoom.
+- **The zoom ends at one atom** (P7, D10): nucleus, electrons, bonds as shared electrons.
+- **Sketches are labelled** (P8, D11).
+- **Experiments run in the stage and are easy to find** (P9, D12): "I can't even see where the experiments are".
+- **One depth switch** (P10, D13): the per-card "Go deeper" links go.
+- **Fun everywhere** (P12, D15), within a dry voice (P11, D14).
+- **Desktop and phone** (P2, D6): this standard covers desktop; the phone gets its own pass after.
 
 ## Reference page
 
