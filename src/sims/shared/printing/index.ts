@@ -1,0 +1,17 @@
+// The printing kit: the pieces every printing close-up shares (spec/desktop-standard.md, "All five experiments
+// are printing close-ups"). Scale: 1 scene unit = 1/3 mm (scale.ts). See each file for its contract.
+export { MM, LAYER_H, LINE_W, HOLE, FILAMENT, HEAT_GLOW, LENS_COLOUR, NOZZLE_PARTS } from './scale'
+export { SECTION_POINTS, CAP_RINGS, beadRings, beadRingCount, beadGeometry, writeBead, hotPlastic } from './beadGeometry'
+export type { BeadRing, BeadForm, BeadShaping } from './beadGeometry'
+export { Bead, LayerStack } from './Bead'
+export type { BeadProps, LayerStackProps } from './Bead'
+export { Nozzle } from './Nozzle'
+export type { NozzleProps } from './Nozzle'
+export { Bed } from './Bed'
+export type { BedProps } from './Bed'
+export { ChainLens, LensChain, LensLabelOverlay } from './ChainLens'
+export type { ChainLensProps, LensHalf } from './ChainLens'
+export { useLensLabels, labelTransform } from './lensLabels'
+export type { LensLabel, LensLabels, PlaceLabel } from './lensLabels'
+export { bandChain, clipChain } from './lensChains'
+export type { BandOptions } from './lensChains'
