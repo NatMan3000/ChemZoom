@@ -49,6 +49,10 @@ No lines yet.
   Means: each experiment runs in the stage of the material page with a clear way back to the zoom; how to start one is visible from the stage itself, under a name that says "experiment", not a third card down the side panel titled "Try it" (the v1 placement he did not notice).
   Test: on any material page at 1920x1080, a first-time reader can point to the experiments without scrolling, and starting one keeps the material page, its switcher and the zoom rail on screen.
 
+- **P10 - One simple/deeper switch for the whole app, remembered.** One switch for the whole app, remembered (D13, 17 Oct, picked the guess). Why: Nathan and Josh want different depths; opening "Go deeper" on every card doubles the clicks and lengthens the panel (P5).
+  Means: a single control, visible on every page, sets simple or deeper for all text at once and is remembered on that device; the per-card "Go deeper" links go.
+  Test: switching to deeper on one page shows the deeper text on every page without further clicks, the choice survives a reload, and no card carries its own "Go deeper" link.
+
 ## 4. Words and numbers
 
 No lines yet.
@@ -69,7 +73,9 @@ Not applicable: ChemZoom has no forms; its controls are the zoom, the material s
 
 ## 7. Voice, fun and Ai
 
-No lines yet.
+- **P11 - It talks like a mate who knows chemistry: dry, no hype.** A mate who knows chemistry, dry, no hype (D14, 17 Oct, picked the guess). Why: the readers are a dad and a 12-year-old who print things; a textbook voice loses Josh and a cheerleader voice talks down to both.
+  Means: short sentences and plain words, the odd dry line where it earns its place, no "Great job!", no exclamation marks, no emoji.
+  Test: no exclamation mark or emoji in any shown string, and every caption reads aloud naturally to a 12-year-old.
 
 ## 8. Built is not done: the editor pass
 
@@ -92,4 +98,4 @@ P lines come from the intent questionnaire of 17 Oct 2026 (`drafts/intent-questi
 
 ## Id index
 
-- **P1** section 1 · **P2** section 1 · **P3** section 1 · **P4** section 1 · **P5** section 5 · **P6** section 5 · **P7** section 3 · **P8** section 3 · **P9** section 3
+- **P1** section 1 · **P2** section 1 · **P3** section 1 · **P4** section 1 · **P5** section 5 · **P6** section 5 · **P7** section 3 · **P8** section 3 · **P9** section 3 · **P10** section 3 · **P11** section 7
