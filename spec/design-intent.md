@@ -27,6 +27,10 @@ Each entry carries its id, his words, the why and a test a stranger could apply 
   Means: three understandings, each with a clear home in the app: (a) why prints fail (not sticking to the bed, bubbles, poor quality), (b) what makes the materials different and why, (c) why each needs its own temperatures and drying. Today (a) covers bubbles (Thirsty plastic) and warping (Cool and warp) but bed adhesion has only a print tip.
   Test: for each of "won't stick", "bubbles", "poor quality", "different temperatures" and "needs drying", a reader can find, within two taps of a material page, a view that shows the cause at the molecule or chain level.
 
+- **P4 - Every page gets finished, none left rough.** "I think we can make them all perfect, I think" (D8, 17 Oct, a correction of the guess that compare and sources could stay rough). Why: a small app with a handful of pages has no room for a page that looks unfinished next to a polished one.
+  Means: the material page is still worked first as the reference page, but compare, basics, sources, home and the experiments are all in scope for the pass and signed off to the same bar.
+  Test: no page in the app is listed as "rough for now" in the sign-off; every route has a sign-off shot at both widths (P2).
+
 ## 2. The never list
 
 No lines yet.
@@ -72,4 +76,4 @@ P lines come from the intent questionnaire of 17 Oct 2026 (`drafts/intent-questi
 
 ## Id index
 
-- **P1** section 1 · **P2** section 1 · **P3** section 1
+- **P1** section 1 · **P2** section 1 · **P3** section 1 · **P4** section 1
