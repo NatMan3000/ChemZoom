@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import type { Molecule } from '../types/chem'
 import { moleculeCentre } from '../three/molecule-geometry'
+import { defaultAtomIndex as pickDefaultAtom } from '../lib/atoms'
 
 // Which atom the zoom dives into, and where it sits on the stage.
 
@@ -16,25 +17,9 @@ export const ATOM_SCENE_SCALE = 0.22
 /** Radius of the whole AtomScene in its own units (the lane contract: everything inside 7). */
 export const ATOM_SCENE_RADIUS = 7
 
-/**
- * The atom shown when nothing was picked: the same rule as the panel's `defaultAtomIndex` (src/lib/atoms.ts,
- * panel lane): the first carbon in the lit group with 2+ carbon neighbours, else the first carbon in the group,
- * else the first carbon, else 0. Used only until the page passes its resolved `selectedAtom`.
- * At merge, replace this body with a call to that function so there is one rule.
- */
+/** The atom shown when nothing was picked: one rule, the panel's (src/lib/atoms.ts). */
 export function defaultAtomIndex(molecule: Molecule, groupId: string | null): number {
-  const group = groupId ? molecule.groups.find((g) => g.id === groupId) : undefined
-  const isC = (i: number) => molecule.atoms[i]?.el === 'C'
-  const carbonNeighbours = (i: number) =>
-    molecule.bonds.reduce((n, b) => n + ((b.a === i && isC(b.b)) || (b.b === i && isC(b.a)) ? 1 : 0), 0)
-  if (group) {
-    const backbone = group.atoms.find((i) => isC(i) && carbonNeighbours(i) >= 2)
-    if (backbone !== undefined) return backbone
-    const anyC = group.atoms.find(isC)
-    if (anyC !== undefined) return anyC
-  }
-  const first = molecule.atoms.findIndex((a) => a.el === 'C')
-  return first >= 0 ? first : 0
+  return pickDefaultAtom(molecule, groupId) ?? 0
 }
 
 /** Where atom i sits on the stage (the molecule scene is drawn centred on the molecule's box). */

@@ -8,8 +8,8 @@ import { elements } from '../../content/elements'
 // DOM labels for the atom level (drei <Html>, never <Text>: <Text> fetches a font from a CDN and breaks offline).
 // Few and plain: the atom's name and what is in it, and at each neighbour its symbol and what the bond is.
 
-// Keep labels under the app's own UI (drei's default z-index range reaches 16 million).
-const Z_RANGE = [20, 0]
+// Keep labels under the app's own UI and the stage chips (drei's default z-index range reaches 16 million).
+const Z_RANGE = [0, 0]
 
 const pill: CSSProperties = {
   background: 'rgba(11, 16, 32, 0.78)',

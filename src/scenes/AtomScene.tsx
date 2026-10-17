@@ -30,6 +30,11 @@ export interface AtomSceneProps {
   opacity?: number
 }
 
+// The atom's own card in the 3D view is off: the panel's atom card says the same (protons, neutrons, the
+// "4 of its own + 4 from its neighbours" line), and in the 3D view the card clipped at the stage top under the
+// chips after a wheel zoom (lead, 17 Oct). Kept, switchable, for the reference session with Nathan.
+const SHOW_TITLE_CARD = false
+
 const UP = new THREE.Vector3(0, 1, 0)
 const Z = new THREE.Vector3(0, 0, 1)
 const v3 = (p: Vec3) => new THREE.Vector3(p[0], p[1], p[2])
@@ -127,8 +132,7 @@ function layoutAtom(molecule: Molecule, model: AtomModel, mats: AtomMaterials): 
 const SLOTS: { slot: TitleSlot; angle: number; half: number; bonus: number }[] = [
   { slot: 'below', angle: -Math.PI / 2, half: 0.95, bonus: 0.12 },
   { slot: 'above', angle: Math.PI / 2, half: 0.95, bonus: 0.08 },
-  { slot: 'right', angle: 0, half: 0.5, bonus: 0 },
-  { slot: 'left', angle: Math.PI, half: 0.5, bonus: 0 },
+  // No left or right slot: the card is wide and clipped at the stage edge there (lead, 17 Oct).
 ]
 
 // On a phone the card sits outside the neighbours (they reach 6.5), at the scene's top or bottom edge.
@@ -210,7 +214,7 @@ export function AtomScene({ molecule, atomIndex, accent, opacity = 1 }: AtomScen
         {layout.innerElectrons.map((e) => (
           <mesh key={e.key} geometry={geo.sphere} material={e.mat} position={e.pos} scale={e.r} />
         ))}
-        {shown && (
+        {shown && SHOW_TITLE_CARD && (
           <AtomTitle
             model={layout.model}
             slot={slot}
