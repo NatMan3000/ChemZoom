@@ -671,7 +671,7 @@ export const materials: Record<Material['id'], Material> = {
       ],
       dryC: 80,
     },
-    sim: { shrink: 5, thirst: 3, uvWeakSpot: { molecule: 'abs-oligomer', group: 'double-bond' }, rubberBlobs: { molecule: 'abs-rubber' } },
+    sim: { shrink: 5, thirst: 3, uvWeakSpot: { molecule: 'abs-rubber', group: 'double-bond' }, rubberBlobs: { molecule: 'abs-rubber' } },
     facts: [
       {
         text: {

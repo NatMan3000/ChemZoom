@@ -105,7 +105,9 @@ export function MoleculeView({ molecule, highlight = null, broken = [], onAtomCl
             onPointerOver={clickable ? (e: ThreeEvent<PointerEvent>) => (e.stopPropagation(), setCursor('pointer')) : undefined}
             onPointerOut={clickable ? () => setCursor('') : undefined}
           >
+            {/* Keyed on dim: three.js compiles `transparent` into the shader, so flipping it needs a fresh material. */}
             <meshStandardMaterial
+              key={dim ? 'dim' : 'lit'}
               color={info?.colour ?? '#cccccc'}
               roughness={0.32}
               metalness={0.05}
@@ -121,7 +123,7 @@ export function MoleculeView({ molecule, highlight = null, broken = [], onAtomCl
       {atomScale < 1.8 &&
         sticks.map((s) => (
           <mesh key={s.key} geometry={stick} position={s.pos} quaternion={s.quat} scale={[1, s.len, 1]}>
-            <meshStandardMaterial color="#C9CED6" roughness={0.5} transparent={s.dim} depthWrite={!s.dim} opacity={s.dim ? DIM_BOND : 1} />
+            <meshStandardMaterial key={s.dim ? 'dim' : 'lit'} color="#C9CED6" roughness={0.5} transparent={s.dim} depthWrite={!s.dim} opacity={s.dim ? DIM_BOND : 1} />
           </mesh>
         ))}
     </group>
