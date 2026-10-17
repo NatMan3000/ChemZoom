@@ -45,7 +45,13 @@ No lines yet.
 
 ## 5. Layout and visual
 
-No lines yet.
+- **P5 - The side panel must not need a page of scrolling.** "I'm not really sure, but we have to scroll down nearly a whole page, so maybe the side needs to be wider, or the sections need to collapse, or text needs to be smaller, or something." (D9, 17 Oct, chose to say what rather than the tabs guess). Why: the panel sits beside the 3D view; scrolling it away from the view breaks the link between what you read and what you see.
+  Means: the fix is open (wider panel, collapsing sections, tighter text, or a mix); it is chosen on the reference page with him, not decided here.
+  Test: at 1920x1080 the panel content for the current zoom step is readable without scrolling, and anything below the fold is a deliberate "more" the reader opens, not the default.
+
+- **P6 - One continuous zoom from the spool to the atom.** "I think you should be able to zoom in from the spool and keep zooming to the strand tangle chain molecule and atom without having to select each section. It should just continuous zoom in and change to the different area as it zooms" (D9, 17 Oct). Why: the app's whole idea is the zoom; buttons between steps turn a journey into a slideshow.
+  Means: zooming the 3D view (mouse wheel, trackpad or pinch) keeps going past each level and hands over to the next one as it gets close, and back out the same way. The step rail and the panel follow the zoom rather than drive it; tapping a step still jumps straight there.
+  Test: from the spool, zooming alone (no clicks) reaches the atom through all six levels in order, and zooming out alone returns to the spool; the rail and panel show the current level at every point.
 
 ## 6. Forms
 
@@ -76,4 +82,4 @@ P lines come from the intent questionnaire of 17 Oct 2026 (`drafts/intent-questi
 
 ## Id index
 
-- **P1** section 1 · **P2** section 1 · **P3** section 1 · **P4** section 1
+- **P1** section 1 · **P2** section 1 · **P3** section 1 · **P4** section 1 · **P5** section 5 · **P6** section 5
