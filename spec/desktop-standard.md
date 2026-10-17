@@ -25,6 +25,9 @@ Recorded with Nathan's words before any worker is briefed. The intent answers (1
 - **Fun everywhere** (P12, D15), within a dry voice (P11, D14).
 - **Desktop and phone** (P2, D6): this standard covers desktop; the phone gets its own pass after.
 
+- **Experiments show printing, close up, not a tangle of wiggly lines** (reference session, 17 Oct): "The concept is a good idea on all of them... I just think that it's just a whole bunch of wiggly lines and not sure that really is the best way to express what's happening. I don't know if you can do it as something is printed, whether it's a line being printed, but really close up on the line, possibly." Trial first on one experiment (Layer bonding), then the other four on his yes.
+- **An animation ends where it stops** (reference session, 17 Oct): "at the end of the animations of each experiment it kind of jumps... it doesn't stop where the animation is, it maybe goes back to the start of where the animation was, something jumps". The last frame of a run is the frame left on screen; nothing snaps back or jumps when it settles.
+
 ## Reference page
 
 To be worked with Nathan: the PLA material page, all six steps. Not a template: each material and step keeps its own judgement.
