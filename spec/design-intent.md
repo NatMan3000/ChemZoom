@@ -23,6 +23,10 @@ Each entry carries its id, his words, the why and a test a stranger could apply 
   Means: desktop and phone are the two widths every page is finished at; tablet is in between and follows from them.
   Test: every page is signed off with a shot at 1920x1080 and at 390x844, and neither needs sideways scrolling or hides the 3D view.
 
+- **P3 - Ten minutes in, the printing problems make sense.** "We understand why we have issues with printing, whether things don't stick or bubbles and quality issues. We understand what the difference between the different materials is and why they are different from each other. And we understand why different materials print differently or need different temperatures or drying, etc." (D7, 17 Oct). Why: the chemistry is the means; the payoff is knowing why a print failed and what to change.
+  Means: three understandings, each with a clear home in the app: (a) why prints fail (not sticking to the bed, bubbles, poor quality), (b) what makes the materials different and why, (c) why each needs its own temperatures and drying. Today (a) covers bubbles (Thirsty plastic) and warping (Cool and warp) but bed adhesion has only a print tip.
+  Test: for each of "won't stick", "bubbles", "poor quality", "different temperatures" and "needs drying", a reader can find, within two taps of a material page, a view that shows the cause at the molecule or chain level.
+
 ## 2. The never list
 
 No lines yet.
@@ -68,4 +72,4 @@ P lines come from the intent questionnaire of 17 Oct 2026 (`drafts/intent-questi
 
 ## Id index
 
-- **P1** section 1 · **P2** section 1
+- **P1** section 1 · **P2** section 1 · **P3** section 1
