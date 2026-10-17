@@ -9,6 +9,7 @@ Surface: desktop, 1920x1080 CSS pixels (Nathan's 4K screen at 2x). Started 17 Oc
 - **Nothing important under the zoom rail.** The 3D subject is framed inside the area the rail and the stage badges leave free.
 - **A picture keeps its visual language.** Balls on sticks mean atoms and bonds, and nothing else uses them (the chain step's repeat-unit beads currently do).
 - **Readable lines.** Captions sit in a column of the layout, not across the full 1920 width (the experiments' caption runs to about 1,900 px today). No text under 14 px (DESIGN.md floor); baseline has 12 px on the stage scale chip and the sources page's domain lines.
+- **Anything you can tap looks tappable.** A tappable thing in the 3D view shows it on the model itself (a hover glow, a ring, a visible cue), not only in panel text. Nathan, 17 Oct, on tapping atoms: "That bit wasn't obvious at all But we accidentally found it".
 - **The stage fills its frame.** A 3D subject fills most of its stage at its default camera; one material's tangle is not half the size of another's.
 
 ## Decisions
