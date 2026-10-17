@@ -98,9 +98,13 @@ Owns: `src/sims/**` (except `types.ts`, which is the contract).
 
 ## Done when (lead checks each)
 
-- ⬜ `bun run build` and `bun run lint` pass on the merged main.
-- ⬜ All five materials walk all six zoom steps with checked captions; switching material keeps the step.
-- ⬜ All five sims run on the right materials; nothing animates when nobody is touching it.
-- ⬜ Compare, basics and sources pages work; every fact shows a source.
-- ⬜ Driven in a real browser at 1920x1080 and 390x844: no overflow, no text under the stage, safe areas right.
-- ⬜ Live at https://natman3000.github.io/ChemZoom/ and loads offline after the first visit.
+- ✅ `bun run build` and `bun run lint` pass on the merged main.
+- ✅ All five materials walk all six zoom steps with checked captions; switching material keeps the step.
+- ✅ All five sims run on the right materials; nothing animates when nobody is touching it.
+- ✅ Compare, basics and sources pages work; every fact shows a source.
+- ✅ Driven in a real browser at 1920x1080 and 390x844: no overflow, no text under the stage, safe areas right.
+- ✅ Live at https://natman3000.github.io/ChemZoom/ and loads offline after the first visit.
+
+## Amendment 17 Oct 2026
+
+v1 shipped. All three lanes merged (content 6a80a96, app 56ba0aa, sims 412b1ec); every done-when item checked by the lead: gates green, pages and all five sims shot in headless Chrome at 1920x1080 and 390x844 with 0 idle frames, live at https://natman3000.github.io/ChemZoom/ [live], and the PLA molecule page renders offline after one visit [live]. Decisions made during the build: every trait bar reads higher = better (moisture shows as "Stays dry"); the TPU heat slider starts below room temperature so its -50°C glass transition is on the scale; Sunlight shows the ABS rubber beside the ASA rubber. Not yet checked on a real iPhone or iPad (safe areas tested with an injected inset only).
