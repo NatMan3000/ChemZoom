@@ -1,66 +1,75 @@
 import { useEffect, useLayoutEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
-import { pulledChain, type StrandRole } from '../three/chains'
+import type { StrandRole } from '../three/chains'
 import type { Material } from '../types/chem'
 import { roleColour } from './palette'
+import { chainLayout } from './sceneLayout'
+import { StageLabel } from './StageLabel'
 
-// One chain pulled out of the tangle. Each bead is one repeat unit; the bright one is the unit
-// the next step zooms into. The chain runs off both edges: a real one has thousands of beads.
+// One chain pulled out of the tangle. Each capsule is one repeat unit, lying along the chain (finding 5: the
+// old balls on a stick read as atoms and bonds, which only the molecule and atom steps use). The bright unit
+// is the one the next step zooms into. The chain runs off both edges: a real one has thousands of units.
 
-const BEAD_SPACING = 1.05
-const BEAD_R = 0.34
+const UNIT_R = 0.23
+const UNIT_LEN = 0.44 // the straight part; the whole capsule is UNIT_LEN + 2 * UNIT_R long
+const Y = new THREE.Vector3(0, 1, 0)
 
-export function ChainScene({ material }: { material: Material }) {
-  const curve = useMemo(() => pulledChain(3), [])
-  const backbone = useMemo(() => new THREE.TubeGeometry(curve, 400, 0.07, 8, false), [curve])
-  useEffect(() => () => backbone.dispose(), [backbone])
-
-  const beads = useMemo(() => {
-    const total = curve.getLength()
-    const n = Math.floor(total / BEAD_SPACING)
-    const pts: THREE.Vector3[] = []
-    for (let i = 0; i <= n; i++) pts.push(curve.getPointAt(i / n))
-    // The bead nearest the middle is "this one".
-    let focus = 0
-    pts.forEach((p, i) => {
-      if (p.lengthSq() < pts[focus].lengthSq()) focus = i
-    })
-    return { pts, focus }
-  }, [curve])
+export function ChainScene({ material, labels = false }: { material: Material; labels?: boolean }) {
+  const chain = chainLayout()
+  const backbone = useMemo(() => new THREE.TubeGeometry(chain.curve, 400, 0.05, 8, false), [chain])
+  const capsule = useMemo(() => new THREE.CapsuleGeometry(UNIT_R, UNIT_LEN, 6, 20), [])
+  useEffect(
+    () => () => {
+      backbone.dispose()
+      capsule.dispose()
+    },
+    [backbone, capsule],
+  )
+  const thread = useMemo(() => new THREE.Color(material.accent).multiplyScalar(0.45), [material.accent])
 
   const ref = useRef<THREE.InstancedMesh>(null)
   useLayoutEffect(() => {
     const mesh = ref.current
     if (!mesh) return
     const m = new THREE.Matrix4()
+    const q = new THREE.Quaternion()
+    const s = new THREE.Vector3()
     const segmented = material.morphology === 'segmented'
-    beads.pts.forEach((p, i) => {
-      const s = i === beads.focus ? 1.3 : 1
-      m.makeScale(s, s, s).setPosition(p)
+    chain.points.forEach((p, i) => {
+      const focus = i === chain.focus
+      q.setFromUnitVectors(Y, chain.tangents[i])
+      s.setScalar(focus ? 1.12 : 1)
+      m.compose(p, q, s)
       mesh.setMatrixAt(i, m)
-      // TPU: short runs of hard beads, then longer runs of soft ones.
+      // TPU: short runs of hard units, then longer runs of soft ones.
       const hard = !segmented || (i + 40) % 8 < 3
-      const role: StrandRole = i === beads.focus ? 'focus' : hard ? 'hard' : 'soft'
-      mesh.setColorAt(i, roleColour(material.accent, role, 0.6))
+      const role: StrandRole = focus ? 'focus' : hard ? 'hard' : 'soft'
+      // Neighbouring units alternate a touch lighter and darker so each one reads as its own piece.
+      const c = roleColour(material.accent, role, 0.6)
+      if (!focus) c.offsetHSL(0, 0, i % 2 ? -0.05 : 0.03)
+      mesh.setColorAt(i, c)
     })
     mesh.instanceMatrix.needsUpdate = true
     if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true
-  }, [beads, material.accent, material.morphology])
+  }, [chain, material.accent, material.morphology])
+
+  const focusPos = chain.points[chain.focus]
+  const focusQuat = useMemo(() => new THREE.Quaternion().setFromUnitVectors(Y, chain.tangents[chain.focus]), [chain])
 
   return (
     <group>
       <mesh geometry={backbone}>
-        <meshStandardMaterial color="#C9CED6" roughness={0.5} />
+        <meshStandardMaterial color={thread} roughness={0.6} />
       </mesh>
-      <instancedMesh key={beads.pts.length} ref={ref} args={[undefined, undefined, beads.pts.length]}>
-        <sphereGeometry args={[BEAD_R, 24, 16]} />
+      <instancedMesh key={chain.points.length} ref={ref} args={[capsule, undefined, chain.points.length]}>
         <meshStandardMaterial roughness={0.35} />
       </instancedMesh>
-      {/* A soft halo around the focus bead. */}
-      <mesh position={beads.pts[beads.focus]}>
-        <sphereGeometry args={[BEAD_R * 2.1, 32, 20]} />
+      {/* A soft halo round the unit we zoom into next. */}
+      <mesh position={focusPos} quaternion={focusQuat} scale={1.75}>
+        <capsuleGeometry args={[UNIT_R, UNIT_LEN, 6, 20]} />
         <meshBasicMaterial color="#ffffff" transparent opacity={0.08} depthWrite={false} />
       </mesh>
+      {labels && <StageLabel position={[focusPos.x, focusPos.y + 0.95, focusPos.z]}>One repeat unit</StageLabel>}
     </group>
   )
 }
