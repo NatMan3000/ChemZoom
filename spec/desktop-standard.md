@@ -35,6 +35,8 @@ Recorded with Nathan's words before any worker is briefed. The intent answers (1
 
 - **Rail-tap flights through several levels go a bit slower** (reference session, 17 Oct): "When being on one view, say the spool and then choosing the atom, it auto zooms in and cycles through them, which is a good effect, but I think it should be slowed down a bit". Keep the fly-through; about 1.5x slower (spool to atom about 3.6 s), one tunable constant.
 
+- **The zoom never pulls back by itself, and no frame from an earlier level flashes** (reference session, 18 Oct, spool to strand): "if I'm scrolling in slowly when it gets to nearly the transition it will suddenly zoom back out to this spool like it's on the edge... getting to that transition and then having it pull back out to the spool again is super annoying", and "When you do make it past that point of no return, I get this flash For about one frame of the old full spool view... It's very jarring." Stopping part way leaves the view where the reader stopped (or finishes a hand-over already past half way); every frame of a hand-over is checked frame by frame, not only settled shots.
+
 ## Reference page
 
 To be worked with Nathan: the PLA material page, all six steps. Not a template: each material and step keeps its own judgement.
