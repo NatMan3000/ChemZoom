@@ -21,6 +21,7 @@ import { StageLights } from './StageLights'
 import { atomViewDirection, FOV, homeFor, linkBetween, SPACE_FILL_SCALE, stageFrame, type Home, type PoseInputs, type StageFrame } from './stagePoses'
 import { StrandScene } from './StrandScene'
 import { TangleScene } from './TangleScene'
+import { drawnOpacity, zoomTrace } from './zoomTrace'
 import {
   clampZ,
   dominantLevel,
@@ -229,9 +230,9 @@ function Director({ material, level, onLevelChange, highlight, selectedAtom, onA
   const exitSmooth = useRef<THREE.Vector3 | null>(null)
 
   // Latest props for the frame loop and DOM handlers.
-  const live = useRef({ material, molecule, highlight, selectedAtom, spaceFill, frame, reduced, onLevelChange, onAtomClick })
+  const live = useRef({ material, level, molecule, highlight, selectedAtom, spaceFill, frame, reduced, onLevelChange, onAtomClick })
   useLayoutEffect(() => {
-    live.current = { material, molecule, highlight, selectedAtom, spaceFill, frame, reduced, onLevelChange, onAtomClick }
+    live.current = { material, level, molecule, highlight, selectedAtom, spaceFill, frame, reduced, onLevelChange, onAtomClick }
   })
 
   const candidateAtom = useCallback((): number => {
@@ -456,6 +457,8 @@ function Director({ material, level, onLevelChange, highlight, selectedAtom, onA
         echoes.current = echoes.current.slice(k + 1) // our own report coming back
         return
       }
+      // The page caught up with where the stage already is (an echo that arrived another way): nothing to fly to.
+      if (j === reported.current && !flight.current) return
       // Already on the way (a tapped atom: the page follows the tap to the atom step at once).
       if (flight.current?.to === j) return
       flyTo(j, false)
@@ -559,6 +562,29 @@ function Director({ material, level, onLevelChange, highlight, selectedAtom, onA
     camera.updateProjectionMatrix()
     kick()
   }, [camera, frame, size.width, size.height, kick])
+
+  // A harness's frame-by-frame record of what each drawn frame showed (zoomTrace.ts); off unless asked for.
+  const scene = useThree((s) => s.scene)
+  useEffect(() => {
+    const trace = zoomTrace()
+    if (!trace) return
+    ;(globalThis as unknown as { __czGroups?: Map<string, THREE.Group> }).__czGroups = groups.current
+    scene.onAfterRender = () => {
+      const drawn: Record<string, number> = {}
+      for (const [key, g] of groups.current) {
+        drawn[key] = drawnOpacity(g)
+        if (key.endsWith(':spool')) for (const name of [spoolPart.end, spoolPart.body, ...SPOOL_FLANGE_SIDES.map(spoolPart.flange)]) {
+          const part = g.getObjectByName(name)
+          if (part) drawn[`${key}/${name}`] = drawnOpacity(part)
+        }
+      }
+      const target = controls.current?.target ?? new THREE.Vector3()
+      trace.push({ t: performance.now(), z: z.current, zTarget: zTarget.current, flight: !!flight.current || !!swap.current, dist: camera.position.distanceTo(target), drawn })
+    }
+    return () => {
+      scene.onAfterRender = () => {}
+    }
+  }, [scene, camera])
 
   // ---------------------------------------------------------------- per frame
 
@@ -765,7 +791,8 @@ function Director({ material, level, onLevelChange, highlight, selectedAtom, onA
       reported.current = d
       const name = levelName(d)
       if (name === 'atom') L.onAtomClick(atomNow)
-      echoes.current.push({ level: name, at: now })
+      // Only a level the page does not already show comes back as an echo; a stale entry would swallow a later rail tap.
+      if (name !== L.level) echoes.current.push({ level: name, at: now })
       L.onLevelChange?.(name)
     }
 
@@ -815,8 +842,11 @@ function Director({ material, level, onLevelChange, highlight, selectedAtom, onA
     for (const [key, g] of groups.current) {
       const want = shown[key]
       if (!want || want.fade <= 0.002) {
-        g.visible = false
+        // Put any per-part fades back BEFORE hiding: resetParts shows every part and the group as built
+        // (clearFade), so hiding first drew the whole spool at full for one frame as the strand took over
+        // (Nathan, 18 Oct: "this frame flash of blue and clearly the previous spool version of the filament").
         resetParts(key, g)
+        g.visible = false
         faded.current.delete(key)
         if (key.includes(':atom:')) nextAtomFade[key] = 0
         continue

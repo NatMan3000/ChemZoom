@@ -58,15 +58,19 @@ export const innerEdge = (i: number) => i + HOLD_IN
 export const outerEdge = (i: number) => i - HOLD_OUT
 
 /**
- * Where to settle when the user stops part way through a hand-over: carry on in the direction they were
- * going once they are a fifth of the way across, otherwise fall back. Either way the zoom glides to that
- * level's home view, so a level you arrive at is framed the way the rail would show it.
+ * Where to settle when the user stops part way through a hand-over. The zoom never pulls back by itself
+ * (desktop standard, Nathan 18 Oct: "getting to that transition and then having it pull back out to the spool
+ * again is super annoying"). Past half way in the direction they were going, the hand-over finishes: the zoom
+ * glides on to its end (the next level fully on stage, the edge of its hold zone) and no further. Anywhere else
+ * it stays exactly where the reader stopped. It never glides to a level's home view.
  */
 export function settleTarget(z: number, lastDir: number): number {
   const ph = phaseOf(z)
   if (ph.kind === 'hold') return z
-  const up = lastDir > 0 ? ph.p > 0.2 : lastDir < 0 ? ph.p > 0.8 : ph.p >= 0.5
-  return up ? ph.lo + 1 : ph.lo
+  // The page already shows the far level from half way (dominantLevel), so finishing agrees with the rail.
+  if (lastDir > 0 && ph.p >= 0.5) return outerEdge(ph.lo + 1)
+  if (lastDir < 0 && ph.p < 0.5) return innerEdge(ph.lo)
+  return z
 }
 
 /**
