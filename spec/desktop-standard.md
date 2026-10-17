@@ -28,6 +28,8 @@ Recorded with Nathan's words before any worker is briefed. The intent answers (1
 - **Experiments show printing, close up, not a tangle of wiggly lines** (reference session, 17 Oct): "The concept is a good idea on all of them... I just think that it's just a whole bunch of wiggly lines and not sure that really is the best way to express what's happening. I don't know if you can do it as something is printed, whether it's a line being printed, but really close up on the line, possibly." Trial first on one experiment (Layer bonding), then the other four on his yes.
 - **An animation ends where it stops** (reference session, 17 Oct): "at the end of the animations of each experiment it kind of jumps... it doesn't stop where the animation is, it maybe goes back to the start of where the animation was, something jumps". The last frame of a run is the frame left on screen; nothing snaps back or jumps when it settles.
 
+- **Each zoom level is the piece you were zooming into, the same way round** (reference session, 17 Oct, on spool to strand): "The transition should actually have the strand at the same angle as what's coming out of the roll, so you end up zooming into the strand end that is coming out of the roll and that becomes the strand piece that you're looking at the end of currently it's at the opposite angle and doesn't transition into it." Every hand-over continues the same object at the same angle and place: the spool's free end becomes the strand, the strand's cut face becomes the tangle, the pulled-out chain becomes the chain, its focus unit becomes the molecule, the picked atom becomes the atom.
+
 ## Reference page
 
 To be worked with Nathan: the PLA material page, all six steps. Not a template: each material and step keeps its own judgement.
