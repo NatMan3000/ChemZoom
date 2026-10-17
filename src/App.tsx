@@ -1,24 +1,40 @@
-import { Canvas } from '@react-three/fiber'
-import { OrbitControls } from '@react-three/drei'
-import { getMolecule, materialList } from './content'
-import { MoleculeView } from './three/MoleculeView'
+import { lazy, Suspense } from 'react'
+import { Navigate, Route, Routes } from 'react-router-dom'
+import { Shell } from './app/Shell'
+import { HomePage } from './app/pages/HomePage'
+import { SourcesPage } from './app/pages/SourcesPage'
+import { NotFound } from './app/pages/NotFound'
 
-// Placeholder shell from the scaffold: proves the data and the shared renderer work.
-// Lane B replaces this with the real app (plans/build-chemzoom.md).
+// The 3D pages load as their own chunk so the home and sources pages open fast.
+const MaterialPage = lazy(() => import('./app/pages/MaterialPage'))
+const ComparePage = lazy(() => import('./app/pages/ComparePage'))
+const BasicsPage = lazy(() => import('./app/pages/BasicsPage'))
+const SimHostPage = lazy(() => import('./app/pages/SimHostPage'))
+
 export default function App() {
-  const pla = getMolecule('pla-oligomer')
   return (
-    <div className="flex h-dvh flex-col">
-      <header className="p-4 font-display text-2xl">ChemZoom</header>
-      <p className="px-4 text-ink-muted">{materialList.map((m) => m.short).join(' · ')}</p>
-      <div className="min-h-0 flex-1">
-        <Canvas frameloop="demand" camera={{ position: [0, 0, 14], fov: 40 }}>
-          <ambientLight intensity={0.6} />
-          <directionalLight position={[5, 8, 6]} intensity={1.4} />
-          <MoleculeView molecule={pla} highlight="repeat" />
-          <OrbitControls makeDefault />
-        </Canvas>
-      </div>
+    <Shell>
+      <Suspense fallback={<Loading />}>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/m/:id" element={<MaterialPage />} />
+          <Route path="/m/:id/sim/:simId" element={<SimHostPage />} />
+          <Route path="/m/:id/:step" element={<MaterialPage />} />
+          <Route path="/compare" element={<ComparePage />} />
+          <Route path="/basics" element={<BasicsPage />} />
+          <Route path="/sources" element={<SourcesPage />} />
+          <Route path="/home" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Suspense>
+    </Shell>
+  )
+}
+
+function Loading() {
+  return (
+    <div className="grid min-h-0 flex-1 place-items-center text-ink-muted" role="status">
+      Loading the 3D stage
     </div>
   )
 }
