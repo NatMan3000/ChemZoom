@@ -45,6 +45,10 @@ No lines yet.
   Means: molecules keep every atom and their real shapes; where a view has to simplify (the tangle, the chain beads, an atom's electrons drawn as dots on rings) it carries a visible "sketch" label saying so.
   Test: every 3D view is either real geometry (molecules from RDKit, real proportions) or shows a label marking it as a sketch; no unlabelled simplification.
 
+- **P9 - Experiments play inside the material page, in the 3D view, and are easy to find.** Inside the material page, in the stage (D12, 17 Oct, picked option), and "I can't even see where the experiments are, so maybe they're not even added or they're hard to find" (D12 note). Why: an experiment nobody finds teaches nothing, and leaving the page to run one loses the place in the zoom.
+  Means: each experiment runs in the stage of the material page with a clear way back to the zoom; how to start one is visible from the stage itself, under a name that says "experiment", not a third card down the side panel titled "Try it" (the v1 placement he did not notice).
+  Test: on any material page at 1920x1080, a first-time reader can point to the experiments without scrolling, and starting one keeps the material page, its switcher and the zoom rail on screen.
+
 ## 4. Words and numbers
 
 No lines yet.
@@ -88,4 +92,4 @@ P lines come from the intent questionnaire of 17 Oct 2026 (`drafts/intent-questi
 
 ## Id index
 
-- **P1** section 1 · **P2** section 1 · **P3** section 1 · **P4** section 1 · **P5** section 5 · **P6** section 5 · **P7** section 3 · **P8** section 3
+- **P1** section 1 · **P2** section 1 · **P3** section 1 · **P4** section 1 · **P5** section 5 · **P6** section 5 · **P7** section 3 · **P8** section 3 · **P9** section 3

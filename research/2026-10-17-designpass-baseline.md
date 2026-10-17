@@ -36,6 +36,8 @@ Steps 0 to 3 of the DesignPass, run on the live v1 code (commit 5657589) the eve
 
 10. **Tapping an atom is hidden.** Nathan, 17 Oct: "I didn't realize that you could click on an atom. That bit wasn't obvious at all But we accidentally found it". The only cue is a line of panel text at the atom step and a pointer cursor on hover; nothing on the model itself invites a tap. With the continuous zoom (P6), zooming in on the atom under the cursor or fingers can be how an atom gets picked, so the choice stops depending on a hidden click.
 
+11. **The experiments are not found.** Nathan, 17 Oct: "I can't even see where the experiments are, so maybe they're not even added or they're hard to find". They are the third card in the side panel, titled "Try it", below the fold on a first look; nothing on the stage points to them and the word "experiment" appears nowhere.
+
 ## Verdict per page
 
 | Page | Verdict |
