@@ -101,7 +101,7 @@ export const materials: Record<Material['id'], Material> = {
         deeper: 'Every chiral carbon here is (S), the L form, as in poly(L-lactide) (PLLA) made from L-lactide. Polymerising a 50:50 mix of L and D lactide gives an amorphous PLA instead.',
       },
       atom: {
-        simple: 'PLA has only three kinds of atom: carbon (grey), oxygen (red) and hydrogen (white). Tap one to meet it.',
+        simple: 'PLA has only three kinds of atom: carbon (grey), oxygen (red) and hydrogen (white). Here is one of its atoms, up close.',
         deeper: 'With no nitrogen or chlorine, burning PLA gives only water and carbon oxides (Bambu data sheet), and it cannot form dioxins or hydrochloric acid when incinerated.',
       },
     },
@@ -268,7 +268,7 @@ export const materials: Record<Material['id'], Material> = {
         deeper: 'Ester links join every acid to every glycol. The flat benzene ring in each unit makes the chain stiff; the puckered cyclohexane ring of CHDM is what spoils the packing.',
       },
       atom: {
-        simple: 'Like PLA, PETG has only carbon, oxygen and hydrogen. Tap one to meet it.',
+        simple: 'Like PLA, PETG has only carbon, oxygen and hydrogen. Here is one of its atoms, up close.',
         deeper: 'Bambu lists the combustion products of PETG HF as water and carbon oxides, since there is no nitrogen in it.',
       },
     },
@@ -431,7 +431,7 @@ export const materials: Record<Material['id'], Material> = {
         deeper: 'Each urethane N-H can hydrogen-bond to a C=O on a neighbouring hard segment. Those hydrogen bonds hold the hard islands together and, when the material is stretched, add to its strength and tear resistance.',
       },
       atom: {
-        simple: 'TPU adds a fourth kind of atom: nitrogen (blue), in every urethane link. Tap one to meet it.',
+        simple: 'TPU adds a fourth kind of atom: nitrogen (blue), in every urethane link. Here is one of its atoms, up close.',
         deeper: 'The nitrogen is why Bambu lists nitrogen oxides among TPU’s combustion products, alongside water and carbon oxides.',
       },
     },
@@ -594,7 +594,7 @@ export const materials: Record<Material['id'], Material> = {
         deeper: 'The rubber backbone is -CH2-CH=CH-CH2- (cis-1,4 here). Nitrile groups on neighbouring chains are polar and attract each other, which is why ABS is stronger than plain polystyrene.',
       },
       atom: {
-        simple: 'Carbon and hydrogen, plus one nitrogen (blue) in every acrylonitrile. There is no oxygen in the plastic itself. Tap an atom to meet it.',
+        simple: 'Carbon and hydrogen, plus one nitrogen (blue) in every acrylonitrile. There is no oxygen in the plastic itself. Here is one of its atoms, up close.',
         deeper: 'Formula (C8H8)x(C4H6)y(C3H3N)z. The nitrogen is why Bambu lists nitrogen oxides among ABS’s combustion products.',
       },
     },
@@ -761,7 +761,7 @@ export const materials: Record<Material['id'], Material> = {
         deeper: 'The SAN branch is grafted onto the rubber backbone. Each rubber unit carries a butyl ester side group; tap it to see where the oxygen atoms sit.',
       },
       atom: {
-        simple: 'Carbon and hydrogen, nitrogen (blue) in the acrylonitrile, and oxygen (red) in the acrylate side groups. Tap an atom to meet it.',
+        simple: 'Carbon and hydrogen, nitrogen (blue) in the acrylonitrile, and oxygen (red) in the acrylate side groups. Here is one of its atoms, up close.',
         deeper: 'Bambu lists ASA’s composition as acrylonitrile, styrene and acrylate; it burns to water, carbon oxides and nitrogen oxides.',
       },
     },
