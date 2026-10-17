@@ -19,10 +19,16 @@ export const CROSS = 1 - HOLD_IN - HOLD_OUT
 export const Z_MIN = -0.3
 export const Z_MAX = LAST + HOLD_IN
 
-/** Camera distance at the inner edge of a hold zone, as a fraction of home: closer for the molecule, so the dive into the atom keeps going in. */
-export const IN_FACTOR: Record<ZoomLevel, number> = { spool: 2.4, strand: 2.4, tangle: 2.4, chain: 2.4, molecule: 2.25, atom: 2.6 }
+/**
+ * Camera distance at the inner edge of a hold zone, as a fraction of home. Each level's next piece is laid over
+ * the one you zoomed into at its true size (stagePoses linkBetween), so the zoom from one home view to the next
+ * is fixed: about 28x from the spool to the strand (a 1.75 mm strand in a 20 cm spool), about 3x to 7x below it.
+ * These factors share it between the two hold zones and the hand-over so the camera keeps moving in all the way
+ * across (the hand-over itself zooms in about 1.5x to 4x), and closer for the molecule, so the dive into the atom keeps going in.
+ */
+export const IN_FACTOR: Record<ZoomLevel, number> = { spool: 4.8, strand: 2.4, tangle: 1.6, chain: 1.6, molecule: 2.25, atom: 2.6 }
 /** Camera distance at the outer edge of a hold zone, as a multiple of home. Small for the atom: the dive from the molecule must keep moving in. */
-export const OUT_FACTOR: Record<ZoomLevel, number> = { spool: 1.5, strand: 1.5, tangle: 1.5, chain: 1.5, molecule: 1.5, atom: 1.05 }
+export const OUT_FACTOR: Record<ZoomLevel, number> = { spool: 1.5, strand: 1.5, tangle: 1.5, chain: 1.15, molecule: 1.2, atom: 1.05 }
 
 export type Phase = { kind: 'hold'; level: number; q: number } | { kind: 'cross'; lo: number; p: number }
 

@@ -17,7 +17,7 @@ import { ChainScene } from './ChainScene'
 import { SpoolScene } from './SpoolScene'
 import { StageLabel } from './StageLabel'
 import { StageLights } from './StageLights'
-import { atomViewDirection, FOV, homeFor, SPACE_FILL_SCALE, stageFrame, type Home, type PoseInputs, type StageFrame } from './stagePoses'
+import { atomViewDirection, FOV, homeFor, linkBetween, SPACE_FILL_SCALE, stageFrame, type Home, type PoseInputs, type StageFrame } from './stagePoses'
 import { StrandScene } from './StrandScene'
 import { TangleScene } from './TangleScene'
 import {
@@ -39,16 +39,17 @@ import {
 
 // The material page's 3D stage: one Canvas and one continuous zoom from the spool to a single atom
 // (spec/design-intent.md P6, P7). The wheel, a trackpad pinch or a touch pinch moves one number, z
-// (zoomModel.ts); each level holds for a stretch and then hands over to the next as you get close: the
-// outgoing scene grows about the thing you are heading for and fades as the next fades in. The dive from
-// the molecule into one atom is a real camera move: the atom scene sits on the picked atom.
+// (zoomModel.ts); each level holds for a stretch and then hands over to the next as you get close. Across a
+// hand-over the next level is the piece you were zooming into, the same way round (desktop standard, Nathan
+// 17 Oct): its entry piece is laid over the outgoing level's exit piece at the same size and angle (the strand
+// on the spool's loose end, the tangle on a patch of the cut face, the chain on the tangle's bright chain, the
+// molecule's lit unit on the chain's bright capsule), the pair moves as one while the camera carries on in,
+// and the outgoing level fades as the next fades in. The dive from the molecule into one atom is a real camera
+// move: the atom scene sits on the picked atom.
 // Renders only on demand: frames run while z, a flight or a swap is moving, and stop by themselves.
 
 export { SPACE_FILL_SCALE }
 
-/** How much the outgoing scene grows, and how small the incoming one starts, across a hand-over. */
-const GROW = 3.4
-const SHRINK = 0.3
 /** z per second of easing toward the wheel's target: quick, but a mouse notch still glides. */
 const DAMP = 11
 /** A pause this long inside a hand-over finishes it (or backs out of it). */
@@ -134,9 +135,16 @@ interface Swap {
 
 interface CrossState {
   lo: number
+  /** Camera direction at the outgoing side (A's frame) and the incoming side (B's frame). */
   dirLo: THREE.Vector3
   dirHi: THREE.Vector3
+  /** How B is laid over A (stagePoses linkBetween): B units to A units, and B's frame turned into A's. */
+  k: number
+  rot: THREE.Quaternion
+  rotInv: THREE.Quaternion
 }
+
+const IDENTITY = new THREE.Quaternion()
 
 const keyOf = (mid: string, level: ZoomLevel, atom?: number) => (level === 'atom' ? `${mid}:atom:${atom}` : `${mid}:${level}`)
 
@@ -146,6 +154,13 @@ const slerpDir = (a: THREE.Vector3, b: THREE.Vector3, t: number, out = new THREE
 }
 
 const smooth = (a: number, b: number, x: number) => THREE.MathUtils.smoothstep(x, a, b)
+
+interface Shown {
+  fade: number
+  pos?: THREE.Vector3
+  scale?: number
+  quat?: THREE.Quaternion
+}
 
 function Director({ material, level, onLevelChange, highlight, selectedAtom, onAtomClick, spaceFill, resetSignal }: ZoomStageProps) {
   const camera = useThree((s) => s.camera) as THREE.PerspectiveCamera
@@ -281,7 +296,10 @@ function Director({ material, level, onLevelChange, highlight, selectedAtom, onA
       }
       let t = clampZ(zTarget.current + dz)
       if (live.current.reduced) {
-        t = snapPastCross(t, dz)
+        const snapped = snapPastCross(t, dz)
+        // A cut to another level lands on its home view, the way a rail tap does, not the last level's angle.
+        if (snapped !== t) firstApply.current = true
+        t = snapped
         z.current = t
       }
       zTarget.current = t
@@ -529,12 +547,14 @@ function Director({ material, level, onLevelChange, highlight, selectedAtom, onA
     camera.lookAt(target)
   }
 
-  const showGroup = (key: string, fade: number, pos?: THREE.Vector3, scale = 1) => {
+  const showGroup = (key: string, fade: number, pos?: THREE.Vector3, scale = 1, quat?: THREE.Quaternion) => {
     const g = groups.current.get(key)
     if (!g) return
     if (pos) g.position.copy(pos)
     else g.position.set(0, 0, 0)
     g.scale.setScalar(scale)
+    if (quat) g.quaternion.copy(quat)
+    else g.quaternion.identity()
     if (key.includes(':atom:')) {
       g.visible = fade > 0.002
       return
@@ -556,7 +576,7 @@ function Director({ material, level, onLevelChange, highlight, selectedAtom, onA
     const now = performance.now()
     const L = live.current
     let moving = false
-    const shown: Record<string, { fade: number; pos?: THREE.Vector3; scale?: number }> = {}
+    const shown: Record<string, Shown> = {}
 
     // 1. A swap owns the stage while it runs.
     const s = swap.current
@@ -641,14 +661,34 @@ function Director({ material, level, onLevelChange, highlight, selectedAtom, onA
       const e = easeInOut(ph.p)
       if (!cross.current || cross.current.lo !== lo) enterCross(lo, A, B)
       const cs = cross.current!
-      const target = A.exit.clone().lerp(B.target, e)
-      const dist = Math.exp(THREE.MathUtils.lerp(Math.log(A.dist / IN_FACTOR[levelName(lo)]), Math.log(B.dist * OUT_FACTOR[levelName(lo + 1)]), e))
-      placeCamera(target, slerpDir(cs.dirLo, cs.dirHi, e), dist)
-      const physical = lo === 4 // the molecule and the atom share one space: no growing, just the camera moving in
-      const sA = physical ? 1 : Math.pow(GROW, e)
-      const sB = physical ? 1 : Math.pow(SHRINK, 1 - e)
-      shown[keyOf(mid, levelName(lo), atomNow)] = { fade: 1 - smooth(0.15, 0.75, ph.p), pos: physical ? undefined : target.clone().addScaledVector(A.exit, -sA), scale: sA }
-      shown[keyOf(mid, levelName(lo + 1), atomNow)] = { fade: smooth(0.3, 0.85, ph.p), pos: physical ? undefined : target.clone().addScaledVector(B.target, -sB), scale: sB }
+      const d0 = A.dist / IN_FACTOR[levelName(lo)]
+      const d1 = B.dist * OUT_FACTOR[levelName(lo + 1)]
+      const fadeA = 1 - smooth(0.15, 0.75, ph.p)
+      const fadeB = smooth(0.3, 0.85, ph.p)
+      if (lo === 4) {
+        // The molecule and the atom share one space: no laying over, just the camera moving in.
+        const target = A.exit.clone().lerp(B.target, e)
+        placeCamera(target, slerpDir(cs.dirLo, cs.dirHi, e), Math.exp(THREE.MathUtils.lerp(Math.log(d0), Math.log(d1), e)))
+        shown[keyOf(mid, levelName(lo), atomNow)] = { fade: fadeA }
+        shown[keyOf(mid, levelName(lo + 1), atomNow)] = { fade: fadeB }
+      } else {
+        // B's entry piece rides on A's exit piece (B = k x smaller, turned by rot). The pair starts in A's own
+        // frame and ends in B's: the anchor slides from A.exit to B.entry, the pair scales from A's size to B's,
+        // and it turns from rot to none, so each hold zone sees its scene exactly where it left it.
+        const sB = Math.pow(cs.k, 1 - e)
+        const sA = sB / cs.k
+        const rotB = new THREE.Quaternion().slerpQuaternions(cs.rot, IDENTITY, e)
+        const rotA = rotB.clone().multiply(cs.rotInv)
+        const anchor = A.exit.clone().lerp(B.entry, e)
+        // The camera, worked out in B's own frame: from looking at the entry piece the way it looked at A's exit,
+        // to B's home framing just pulled back.
+        const tB = B.entry.clone().lerp(B.target, e).sub(B.entry).multiplyScalar(sB).applyQuaternion(rotB).add(anchor)
+        const dirB = slerpDir(cs.dirLo.clone().applyQuaternion(cs.rotInv), cs.dirHi, e).applyQuaternion(rotB)
+        const distB = Math.exp(THREE.MathUtils.lerp(Math.log(d0 / cs.k), Math.log(d1), e))
+        placeCamera(tB, dirB, sB * distB)
+        shown[keyOf(mid, levelName(lo), atomNow)] = { fade: fadeA, pos: anchor.clone().sub(A.exit.clone().multiplyScalar(sA).applyQuaternion(rotA)), scale: sA, quat: rotA }
+        shown[keyOf(mid, levelName(lo + 1), atomNow)] = { fade: fadeB, pos: anchor.clone().sub(B.entry.clone().multiplyScalar(sB).applyQuaternion(rotB)), scale: sB, quat: rotB }
+      }
       firstApply.current = false
     }
     applyGroups(shown)
@@ -683,24 +723,28 @@ function Director({ material, level, onLevelChange, highlight, selectedAtom, onA
     const travel = f ? Math.sign(f.to - f.from) : Math.sign(zTarget.current - z.current) || lastDir.current
     const fromHi = travel < 0
     const cur = currentDir()
+    const set = (dirLo: THREE.Vector3, dirHi: THREE.Vector3) => {
+      const link = lo === 4 ? { k: 1, rotation: new THREE.Quaternion() } : linkBetween(A, B, dirLo, dirHi)
+      cross.current = { lo, dirLo, dirHi, k: link.k, rot: link.rotation, rotInv: link.rotation.clone().invert() }
+    }
     if (lo === 4) {
       // The dive turns, on the way in, to the side of the atom that shows its bonds spread out (a bond pointing
       // at the lens hides the shared pair); zooming back out keeps its line of sight.
       const mol = live.current.molecule
       const atom = diveAtom.current ?? candidateAtom()
-      cross.current = { lo, dirLo: cur, dirHi: !fromHi && mol ? atomViewDirection(mol, atom, cur) : cur.clone() }
+      set(cur, !fromHi && mol ? atomViewDirection(mol, atom, cur) : cur.clone())
       return
     }
     if (fromHi) {
       remembered.current[lo + 1] = cur.clone()
-      cross.current = { lo, dirLo: remembered.current[lo]?.clone() ?? A.dir.clone(), dirHi: cur }
+      set(remembered.current[lo]?.clone() ?? A.dir.clone(), cur)
     } else {
       remembered.current[lo] = cur.clone()
-      cross.current = { lo, dirLo: cur, dirHi: remembered.current[lo + 1]?.clone() ?? B.dir.clone() }
+      set(cur, remembered.current[lo + 1]?.clone() ?? B.dir.clone())
     }
   }
 
-  function applyGroups(shown: Record<string, { fade: number; pos?: THREE.Vector3; scale?: number }>) {
+  function applyGroups(shown: Record<string, Shown>) {
     const nextAtomFade: Record<string, number> = {}
     for (const [key, g] of groups.current) {
       const want = shown[key]
@@ -711,7 +755,7 @@ function Director({ material, level, onLevelChange, highlight, selectedAtom, onA
         continue
       }
       g.visible = true
-      showGroup(key, want.fade, want.pos, want.scale)
+      showGroup(key, want.fade, want.pos, want.scale, want.quat)
       if (key.includes(':atom:')) nextAtomFade[key] = Math.round(want.fade * 40) / 40
     }
     const prev = atomFade.current

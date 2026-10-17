@@ -3,15 +3,15 @@ import * as THREE from 'three'
 import type { StrandRole } from '../three/chains'
 import type { Material } from '../types/chem'
 import { roleColour } from './palette'
-import { chainLayout } from './sceneLayout'
+import { CHAIN_FOCUS_SCALE, CHAIN_UNIT_LEN, CHAIN_UNIT_R, chainLayout } from './sceneLayout'
 import { StageLabel } from './StageLabel'
 
 // One chain pulled out of the tangle. Each capsule is one repeat unit, lying along the chain (finding 5: the
 // old balls on a stick read as atoms and bonds, which only the molecule and atom steps use). The bright unit
 // is the one the next step zooms into. The chain runs off both edges: a real one has thousands of units.
 
-const UNIT_R = 0.23
-const UNIT_LEN = 0.44 // the straight part; the whole capsule is UNIT_LEN + 2 * UNIT_R long
+const UNIT_R = CHAIN_UNIT_R
+const UNIT_LEN = CHAIN_UNIT_LEN // the straight part; the whole capsule is UNIT_LEN + 2 * UNIT_R long
 const Y = new THREE.Vector3(0, 1, 0)
 
 export function ChainScene({ material, labels = false }: { material: Material; labels?: boolean }) {
@@ -38,7 +38,7 @@ export function ChainScene({ material, labels = false }: { material: Material; l
     chain.points.forEach((p, i) => {
       const focus = i === chain.focus
       q.setFromUnitVectors(Y, chain.tangents[i])
-      s.setScalar(focus ? 1.12 : 1)
+      s.setScalar(focus ? CHAIN_FOCUS_SCALE : 1)
       m.compose(p, q, s)
       mesh.setMatrixAt(i, m)
       // TPU: short runs of hard units, then longer runs of soft ones.

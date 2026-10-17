@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
 import type { Material } from '../types/chem'
+import { SPOOL_TUBE, SPOOL_WIDTH, SPOOL_WIND_R, spoolTailCurve } from './sceneLayout'
 
 // A 1 kg spool, about 200 mm across, wound with filament in the material's accent.
 // Built around the y axis, then laid on its side. 1 scene unit is about 20 mm.
@@ -8,10 +9,10 @@ import type { Material } from '../types/chem'
 const FLANGE_R = 5
 const HOLE_R = 1.45
 const CORE_R = 2.6
-const WIDTH = 3.3
+const WIDTH = SPOOL_WIDTH
 const FLANGE_T = 0.16
-const WIND_R = 4.25 // outer radius of the wound filament
-const TUBE = 0.068 // filament radius, a touch fat so the winding reads at this distance
+const WIND_R = SPOOL_WIND_R // outer radius of the wound filament
+const TUBE = SPOOL_TUBE // filament radius, a touch fat so the winding reads at this distance
 
 function flangeGeometry() {
   const shape = new THREE.Shape()
@@ -67,17 +68,8 @@ export function SpoolScene({ material }: { material: Material }) {
   }, [])
   useEffect(() => () => body.dispose(), [body])
 
-  // The loose end, tucked through a hole in the flange the way spools ship.
-  const tail = useMemo(() => {
-    const start = new THREE.Vector3(WIND_R, WIDTH / 2 - 0.3, 0)
-    const curve = new THREE.CatmullRomCurve3([
-      start,
-      new THREE.Vector3(WIND_R + 0.15, WIDTH / 2 - 0.1, 0.9),
-      new THREE.Vector3(WIND_R + 0.1, WIDTH / 2 + 0.25, 1.6),
-      new THREE.Vector3(WIND_R - 0.2, WIDTH / 2 + 0.6, 2.1),
-    ])
-    return new THREE.TubeGeometry(curve, 48, TUBE, 8, false)
-  }, [])
+  // The loose end, tucked through a hole in the flange the way spools ship (sceneLayout: the strand level continues it).
+  const tail = useMemo(() => new THREE.TubeGeometry(spoolTailCurve(), 48, TUBE, 12, false), [])
   useEffect(() => () => tail.dispose(), [tail])
 
   return (
