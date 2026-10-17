@@ -77,6 +77,10 @@ Not applicable: ChemZoom has no forms; its controls are the zoom, the material s
   Means: short sentences and plain words, the odd dry line where it earns its place, no "Great job!", no exclamation marks, no emoji.
   Test: no exclamation mark or emoji in any shown string, and every caption reads aloud naturally to a 12-year-old.
 
+- **P12 - Fun everywhere.** "Fun everywhere!" (D15, 17 Oct, a correction of the guess that fun belonged only in the experiments and never in the facts). Why: it is a learning app for a 12-year-old and his dad; a page with no play is a page Josh skips.
+  Means: every page earns a moment of play, an interaction, a reveal or a dry line, facts pages included. Fun sits alongside P8 and P11: the chemistry stays true and the voice stays dry, so the fun comes from what you can do and see, not from hype.
+  Test: on every page, a reader can point to something playful (something to poke, a reveal, a surprising comparison, a dry line), and nothing playful makes a fact less true.
+
 ## 8. Built is not done: the editor pass
 
 Before any sign-off row, open each touched page at 1920x1080, read every title, caption, label, chip, legend and "Go deeper" as Josh would, and ask: would he understand this on first read, and does the page need it? Fix the words in the same lane, then take the sign-off shot.
@@ -98,4 +102,4 @@ P lines come from the intent questionnaire of 17 Oct 2026 (`drafts/intent-questi
 
 ## Id index
 
-- **P1** section 1 · **P2** section 1 · **P3** section 1 · **P4** section 1 · **P5** section 5 · **P6** section 5 · **P7** section 3 · **P8** section 3 · **P9** section 3 · **P10** section 3 · **P11** section 7
+- **P1** section 1 · **P2** section 1 · **P3** section 1 · **P4** section 1 · **P5** section 5 · **P6** section 5 · **P7** section 3 · **P8** section 3 · **P9** section 3 · **P10** section 3 · **P11** section 7 · **P12** section 7
