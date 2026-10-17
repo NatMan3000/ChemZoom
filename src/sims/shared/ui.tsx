@@ -90,9 +90,15 @@ export interface ActionButtonProps {
   accent?: string
   /** data-sim-action value, so a test can find the button. */
   action?: string
+  /**
+   * Every label this button can show (Play, Stop, Again). The button takes the width of the longest, so
+   * swapping the label when a run starts or ends never shifts the controls beside it.
+   */
+  labels?: string[]
 }
 
-export function ActionButton({ icon: Icon, label, onClick, disabled, primary, accent, action }: ActionButtonProps) {
+export function ActionButton({ icon: Icon, label, onClick, disabled, primary, accent, action, labels }: ActionButtonProps) {
+  const all = labels ? (labels.includes(label) ? labels : [...labels, label]) : [label]
   const style: CSSProperties | undefined = primary && accent ? { backgroundColor: accent, color: '#0B1020' } : undefined
   return (
     <button
@@ -103,11 +109,19 @@ export function ActionButton({ icon: Icon, label, onClick, disabled, primary, ac
       style={style}
       className={clsx(
         'inline-flex min-h-11 items-center gap-2 rounded-full px-4 text-sm font-semibold transition-[background-color,opacity,transform] duration-200 ease-out active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-45 motion-reduce:transition-none md:text-base',
-        primary ? (accent ? '' : 'bg-primary text-stage') : 'border border-line bg-surface-2 text-ink hover:border-primary',
+        // Primary and plain buttons carry the same 1 px border, so swapping which one is primary keeps their size.
+        'border',
+        primary ? (accent ? 'border-transparent' : 'border-transparent bg-primary text-stage') : 'border-line bg-surface-2 text-ink hover:border-primary',
       )}
     >
       <Icon aria-hidden className="size-4 shrink-0" />
-      {label}
+      <span className="inline-grid">
+        {all.map((l) => (
+          <span key={l} className={clsx('[grid-area:1/1]', l !== label && 'invisible')}>
+            {l}
+          </span>
+        ))}
+      </span>
     </button>
   )
 }

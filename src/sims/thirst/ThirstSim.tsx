@@ -61,6 +61,9 @@ function ThirstSim({ material: m }: SimProps) {
   const [action, setAction] = useState<Action | null>(null)
   const [p, setP] = useState(0)
   const [last, setLast] = useState<Last>('fresh')
+  // Seconds of motion played so far. Each run adds its length when it ends, in the same render as its
+  // last frame, so the jiggle and the water's spin stay where the run left them instead of going back to 0.
+  const [played, setPlayed] = useState(0)
 
   const start = (a: Action) => {
     if (timeline.running) return
@@ -69,6 +72,7 @@ function ThirstSim({ material: m }: SimProps) {
     setP(0)
     timeline.run(MS[a], setP, () => {
       setAction(null)
+      setPlayed((t) => t + MS[a] / 1000)
       if (a === 'soak') {
         setWet(true)
         setLast('soaked')
@@ -90,7 +94,7 @@ function ThirstSim({ material: m }: SimProps) {
     readout = {
       fresh: `Fresh from a sealed bag: no water inside yet (${m.short} thirst ${m.sim.thirst} of 5)`,
       soaked: `Left out: ${thirstWords(m.sim.thirst)} water soaked in between the chains`,
-      popped: 'Pop! The water boiled into steam bubbles: rough surface and strings',
+      popped: 'Pop. The water boiled into steam bubbles: rough surface and strings',
       smooth: 'Smooth: no water to boil, so it prints clean',
       dried: 'Dry again: ready to print',
     }[last]
@@ -99,7 +103,7 @@ function ThirstSim({ material: m }: SimProps) {
     <SimFrame
       stage={
         <SimCanvas fitRadius={3.0} label={`${m.short} chains with water molecules`}>
-          <ThirstScene m={m} wet={wet} action={action} p={p} />
+          <ThirstScene m={m} wet={wet} action={action} p={p} played={played} />
         </SimCanvas>
       }
       controls={
@@ -121,18 +125,21 @@ function ThirstSim({ material: m }: SimProps) {
   )
 }
 
-function ThirstScene({ m, wet, action, p }: { m: Material; wet: boolean; action: Action | null; p: number }) {
+function ThirstScene({ m, wet, action, p, played }: { m: Material; wet: boolean; action: Action | null; p: number; played: number }) {
   const plan = useMemo(() => planTangle(m, { chains: 8, bounds: TANGLE }), [m])
   const drops = useMemo(() => planWater(m), [m])
-  const time = action ? p * (MS[action] / 1000) : 0
+  const time = played + (action ? p * (MS[action] / 1000) : 0)
   const printing = action === 'print'
   const heat = printing ? Math.sin(Math.PI * clamp01(p * 1.1)) : 0
   const amp = 0.02 + 0.12 * heat
+  // The chains slither while the nozzle heats them and settle back as it cools (heat is 0 at both ends
+  // of a print), so a print starts and ends on the same still tangle.
+  const slide = 0.6 * heat
 
   return (
     <group>
       {plan.paths.map((path, i) => (
-        <Tube key={i} points={chainPoints(path, i, time, printing ? 0.6 : 0, amp)} color={m.accent} emissive={HOT} emissiveIntensity={heat * 0.18} radius={0.08} />
+        <Tube key={i} points={chainPoints(path, i, time, slide, amp)} color={m.accent} emissive={HOT} emissiveIntensity={heat * 0.18} radius={0.08} />
       ))}
       <Water drops={drops} wet={wet} action={action} p={p} time={time} />
       <Steam drops={drops} active={printing && wet} p={p} />

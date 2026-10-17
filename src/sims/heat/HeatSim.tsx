@@ -74,7 +74,7 @@ function HeatSim({ material: m }: SimProps) {
   const [lo, hi] = heatRange(m)
   const [temp, setTemp] = useState(() => Math.min(hi, Math.max(lo, 20)))
   const timeline = useTimeline(reduced)
-  const clock = useMotionClock(reduced, timeline.running)
+  const clock = useMotionClock(reduced, timeline)
   const { tgC, meltC, nozzleC } = m.temps
   const patches = patchesOf(m)
 
@@ -116,6 +116,7 @@ function HeatSim({ material: m }: SimProps) {
               action="play"
               icon={timeline.running ? Square : Flame}
               label={timeline.running ? 'Stop' : 'Heat it up'}
+              labels={['Stop', 'Heat it up']}
               onClick={play}
               primary
               accent={m.accent}

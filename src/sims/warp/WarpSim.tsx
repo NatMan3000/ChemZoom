@@ -122,6 +122,7 @@ function WarpSim({ material: m, compareWith: c }: SimProps) {
             action="play"
             icon={timeline.running ? Square : run.p >= 1 ? RotateCcw : Play}
             label={timeline.running ? 'Stop' : run.p >= 1 ? 'Print again' : 'Print and cool'}
+            labels={['Stop', 'Print again', 'Print and cool']}
             onClick={play}
             primary
             accent={m.accent}

@@ -118,6 +118,7 @@ function SunSim({ material: m, compareWith: c }: SimProps) {
             action="play"
             icon={timeline.running ? Square : p >= 1 ? RotateCcw : Sun}
             label={timeline.running ? 'Stop' : p >= 1 ? 'Again' : 'Out in the sun'}
+            labels={['Stop', 'Again', 'Out in the sun']}
             onClick={() => {
               if (!timeline.running && p >= 1) setP(0)
               play()
