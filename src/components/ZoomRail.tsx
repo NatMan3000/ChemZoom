@@ -36,8 +36,8 @@ export function ZoomRail({ level, onChange, orientation }: { level: ZoomLevel; o
             >
               <Icon aria-hidden className={vertical ? 'size-[18px]' : 'size-4'} />
             </span>
-            <span className={clsx('font-semibold', vertical ? 'text-sm' : 'text-[11px] leading-none tracking-tight')}>{s.label}</span>
-            {vertical && <span className="ml-auto pl-2 text-xs text-ink-muted tabular-nums">{i + 1}</span>}
+            <span className={clsx('font-semibold', vertical ? 'text-sm' : 'text-sm leading-none tracking-tighter')}>{s.label}</span>
+            {vertical && <span className="ml-auto pl-2 text-sm text-ink-muted tabular-nums">{i + 1}</span>}
           </button>
         )
       })}

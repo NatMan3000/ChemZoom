@@ -59,7 +59,7 @@ function SourceList({ sources, empty }: { sources: SourceRef[]; empty: string })
           <a href={s.url} target="_blank" rel="noreferrer" className="group flex items-start gap-3 py-2.5">
             <span className="min-w-0 flex-1">
               <span className="block text-[15px] text-ink group-hover:underline">{s.label}</span>
-              <span className="block truncate text-xs text-ink-muted">{hostOf(s.url)}</span>
+              <span className="block truncate text-sm text-ink-muted">{hostOf(s.url)}</span>
             </span>
             <ExternalLink aria-hidden className="mt-1 size-4 shrink-0 text-ink-muted group-hover:text-ink" />
           </a>

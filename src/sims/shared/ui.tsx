@@ -1,13 +1,17 @@
 import { useId, type CSSProperties, type ReactNode, type RefObject } from 'react'
+import { createPortal } from 'react-dom'
 import clsx from 'clsx'
-import { ChevronDown, type LucideIcon } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
+import { useDeeper } from '../../lib/depth'
 import type { Material, Text } from '../../types/chem'
 import { useElementSize } from './layout'
+import { useSimSlots } from './slots'
 import './sims.css'
 
-// The frame and controls every sim shares, so the five read as one family:
-// stage on top (fills what is left), a panel below with the control, a one-line live readout,
-// and a "What you're seeing" caption with a Go deeper layer.
+// The frame and controls every sim shares, so the five read as one family: the 3D stage, the control,
+// a one-line live readout, and a "What you're seeing" caption (its deeper layer follows the app's depth switch).
+// Inside a material page the stage and the controls render into the page's own stage and panel (slots.ts);
+// on their own they stack: stage on top, the panel below.
 
 export interface SimFrameProps {
   stageRef?: RefObject<HTMLDivElement | null>
@@ -20,6 +24,29 @@ export interface SimFrameProps {
 }
 
 export function SimFrame({ stageRef, stage, overlay, controls, readout, caption }: SimFrameProps) {
+  const slots = useSimSlots()
+  if (slots)
+    return (
+      <>
+        {createPortal(
+          <div ref={stageRef} className="absolute inset-0 bg-stage text-ink">
+            <div className="absolute inset-0">{stage}</div>
+            {overlay && <div className="pointer-events-none absolute inset-0">{overlay}</div>}
+          </div>,
+          slots.stage,
+        )}
+        {createPortal(
+          <div className="space-y-3 text-ink">
+            {controls}
+            <p aria-live="polite" className="font-display text-lg leading-snug font-medium tabular-nums">
+              {readout}
+            </p>
+            <Caption text={caption} />
+          </div>,
+          slots.panel,
+        )}
+      </>
+    )
   return (
     // Phone: a tall fixed stage and the panel at its natural height, so the host's panel scrolls.
     // From md up: the stage fills what the panel leaves, and a long panel scrolls on its own.
@@ -40,19 +67,12 @@ export function SimFrame({ stageRef, stage, overlay, controls, readout, caption 
 }
 
 export function Caption({ text }: { text: Text }) {
+  const deeper = useDeeper()
   return (
-    <div className="text-sm leading-relaxed md:text-base">
+    <div className="text-base leading-relaxed">
       <p className="mb-1 text-sm font-semibold text-ink-muted">What you're seeing</p>
       <p>{text.simple}</p>
-      {text.deeper && (
-        <details className="group mt-2">
-          <summary className="inline-flex min-h-11 cursor-pointer list-none items-center gap-1 rounded-full font-semibold text-primary transition-colors duration-200 ease-out hover:text-ink [&::-webkit-details-marker]:hidden">
-            Go deeper
-            <ChevronDown aria-hidden className="size-4 transition-transform duration-200 ease-out group-open:rotate-180 motion-reduce:transition-none" />
-          </summary>
-          <p className="mt-1 text-ink-muted">{text.deeper}</p>
-        </details>
-      )}
+      {deeper && text.deeper && <p className="mt-2 border-l-2 border-primary/50 pl-3 text-ink-muted">{text.deeper}</p>}
     </div>
   )
 }
