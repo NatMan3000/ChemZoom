@@ -64,7 +64,7 @@ export default function BasicsPage() {
                             </div>
                             <figcaption className="mt-2">
                               <span className="block text-sm font-semibold text-ink">{m.caption}</span>
-                              <span className="block text-xs text-ink-muted tabular-nums"><Formula formula={m.mol.formula} /></span>
+                              <span className="block text-sm text-ink-muted tabular-nums"><Formula formula={m.mol.formula} /></span>
                               <AtomLegend molecule={m.mol} className="mt-1.5" />
                             </figcaption>
                           </figure>
@@ -106,7 +106,7 @@ function ElementGrid({ symbols }: { symbols: ElementSymbol[] }) {
               </span>
               <span className="min-w-0">
                 <span className="block font-display text-lg font-semibold text-ink">{e.name}</span>
-                <span className="block text-xs text-ink-muted">
+                <span className="block text-sm text-ink-muted">
                   <span className="tabular-nums">{e.number}</span> {e.number === 1 ? 'proton' : 'protons'}, usually <span className="tabular-nums">{e.bondsUsually}</span> {e.bondsUsually === 1 ? 'bond' : 'bonds'}
                 </span>
               </span>

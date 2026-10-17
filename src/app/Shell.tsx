@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { NavLink, Link } from 'react-router-dom'
 import { Atom, GitCompareArrows, Library, Spool } from 'lucide-react'
 import clsx from 'clsx'
+import { DepthSwitch } from '../components/DepthSwitch'
 import { Logo } from '../components/Logo'
 
 const NAV = [
@@ -21,7 +22,7 @@ export function Shell({ children }: { children: ReactNode }) {
       <header className="flex h-14 shrink-0 items-center gap-2 border-b border-line/70 px-3 sm:gap-4 sm:px-5">
         <Link to="/" className="flex items-center gap-2 rounded-lg pr-2 font-display text-lg font-bold tracking-tight text-ink">
           <Logo className="size-8" />
-          <span>ChemZoom</span>
+          <span className="hidden min-[440px]:inline">ChemZoom</span>
         </Link>
         <nav aria-label="Main" className="ml-auto flex items-center gap-0.5 sm:gap-1">
           {NAV.map(({ to, label, icon: Icon, end }) => (
@@ -42,6 +43,7 @@ export function Shell({ children }: { children: ReactNode }) {
             </NavLink>
           ))}
         </nav>
+        <DepthSwitch />
       </header>
       <main className="flex min-h-0 flex-1 flex-col">{children}</main>
     </div>

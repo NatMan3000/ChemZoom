@@ -9,6 +9,7 @@ import { NotFound } from './app/pages/NotFound'
 const MaterialPage = lazy(() => import('./app/pages/MaterialPage'))
 const ComparePage = lazy(() => import('./app/pages/ComparePage'))
 const BasicsPage = lazy(() => import('./app/pages/BasicsPage'))
+// Old #/m/:id/sim/:simId links redirect into the material page, where experiments now play.
 const SimHostPage = lazy(() => import('./app/pages/SimHostPage'))
 
 export default function App() {
