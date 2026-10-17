@@ -32,9 +32,9 @@ Steps 0 to 3 of the DesignPass, run on the live v1 code (commit 5657589) the eve
 
 8. **Text under the 14 px floor.** The stage scale chip on every material view ("About 1 to 3 nm long", 12 px) and 65 domain lines on the sources page (12 px).
 
-10. **Tapping an atom is hidden.** Nathan, 17 Oct: "I didn't realize that you could click on an atom. That bit wasn't obvious at all But we accidentally found it". The only cue is a line of panel text at the atom step and a pointer cursor on hover; nothing on the model itself invites a tap. With the continuous zoom (P6), zooming in on the atom under the cursor or fingers can be how an atom gets picked, so the choice stops depending on a hidden click.
-
 9. **Home has no 3D.** The one page every visit starts on shows none of what makes the app worth opening. Low priority.
+
+10. **Tapping an atom is hidden.** Nathan, 17 Oct: "I didn't realize that you could click on an atom. That bit wasn't obvious at all But we accidentally found it". The only cue is a line of panel text at the atom step and a pointer cursor on hover; nothing on the model itself invites a tap. With the continuous zoom (P6), zooming in on the atom under the cursor or fingers can be how an atom gets picked, so the choice stops depending on a hidden click.
 
 ## Verdict per page
 
