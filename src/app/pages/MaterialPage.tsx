@@ -34,13 +34,15 @@ function MaterialView({ material, level, experiment }: { material: Material; lev
   const defaultGroup = molecule?.groups.some((g) => g.id === material.repeatUnitGroup) ? material.repeatUnitGroup : null
 
   // Per-material choices reset when the material changes, without remounting the stage.
-  const [pick, setPick] = useState<{ mid: string; group: string | null; atom: number | null }>({ mid: material.id, group: defaultGroup, atom: null })
-  const highlight = pick.mid === material.id ? pick.group : defaultGroup
+  // The molecule step arrives with the whole piece lit (highlight null); the stage still frames and outlines
+  // the repeat unit you zoomed into (D19, 17 Oct).
+  const [pick, setPick] = useState<{ mid: string; group: string | null; atom: number | null }>({ mid: material.id, group: null, atom: null })
+  const highlight = pick.mid === material.id ? pick.group : null
   const selectedAtom = pick.mid === material.id ? pick.atom : null
   const setHighlight = (group: string | null) => setPick({ mid: material.id, group, atom: null })
   const setAtom = useCallback(
-    (atom: number | null) => setPick((p) => ({ mid: material.id, group: p.mid === material.id ? p.group : defaultGroup, atom })),
-    [material.id, defaultGroup],
+    (atom: number | null) => setPick((p) => ({ mid: material.id, group: p.mid === material.id ? p.group : null, atom })),
+    [material.id],
   )
   // The atom step always shows one atom: the one picked, else a backbone carbon in the lit repeat unit (P7).
   // The page resolves it so the stage and the panel can never disagree.
