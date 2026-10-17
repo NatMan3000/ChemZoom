@@ -7,6 +7,7 @@ import { join } from 'node:path'
 import { elements } from '../src/content/elements'
 import { materials } from '../src/content/materials'
 import { ZOOM_LEVELS, type Molecule, type TraitId } from '../src/types/chem'
+import { checkAtomCounts } from '../src/scenes/atom/atomModel'
 
 const ROOT = join(import.meta.dir, '..')
 const MOL_DIR = join(ROOT, 'src', 'data', 'molecules')
@@ -111,6 +112,9 @@ for (const [where, s] of strings) {
   if (us) fail(`${where}: American spelling "${us[0]}"`)
 }
 const textCount = strings.length
+
+// Every atom's electrons add up (shared pairs = bond orders, full outer shells), so the atom level never lies.
+for (const p of checkAtomCounts([...molecules.values()]).problems) fail(`atom counts: ${p}`)
 
 if (problems.length) {
   console.error(problems.map((p) => `FAIL ${p}`).join('\n'))
