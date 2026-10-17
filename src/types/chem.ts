@@ -88,7 +88,11 @@ export const ZOOM_LEVELS: ZoomLevel[] = ['spool', 'strand', 'tangle', 'chain', '
  */
 export type Morphology = 'semicrystalline' | 'amorphous' | 'segmented' | 'rubber-toughened'
 
-/** Compare-bar traits, scored 1 (low) to 5 (high). */
+/**
+ * Compare-bar traits, scored 1 to 5, and every one reads higher = better so the bars compare at a glance.
+ * UI labels: strength "Toughness", flexibility "Flexibility", heat "Heat resistance", uv "Sun resistance",
+ * easy "Easy to print", moisture "Stays dry" (moisture = 6 - sim.thirst; check-content enforces it).
+ */
 export type TraitId = 'strength' | 'flexibility' | 'heat' | 'uv' | 'easy' | 'moisture'
 
 export interface Trait {
