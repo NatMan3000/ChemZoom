@@ -27,6 +27,8 @@ export interface ElementInfo {
   symbol: ElementSymbol
   name: string
   number: number // protons
+  neutrons: number // in the most common isotope (C-12: 6, O-16: 8)
+  shells: number[] // electrons per shell, inner first (C: [2, 4]); the last shell is the one that bonds
   colour: string // Jmol/CPK hex, tuned to read on the dark stage
   radius: number // ball radius in scene units (angstrom-scaled for ball-and-stick)
   bondsUsually: number // how many bonds it normally makes (C 4, N 3, O 2, H 1)

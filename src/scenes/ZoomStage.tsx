@@ -50,7 +50,13 @@ interface Flight {
 
 export interface ZoomStageProps {
   material: Material
+  /** The level to show. When it changes from outside (a rail tap, a material switch) the stage flies there. */
   level: ZoomLevel
+  /**
+   * Fired when the user's own zooming (wheel, trackpad, pinch) crosses into another level, so the page can
+   * follow: rail, panel and URL. Contract for the continuous zoom (spec/design-intent.md P6).
+   */
+  onLevelChange?: (level: ZoomLevel) => void
   /** AtomGroup id lit at the molecule step. */
   highlight: string | null
   selectedAtom: number | null
