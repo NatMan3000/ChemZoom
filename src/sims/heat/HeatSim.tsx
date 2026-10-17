@@ -1,24 +1,28 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import * as THREE from 'three'
+import { useThree } from '@react-three/fiber'
 import { Flame, Square } from 'lucide-react'
 import type { Material, Text } from '../../types/chem'
 import type { SimProps } from '../types'
 import { SimCanvas } from '../shared/SimCanvas'
-import { Tube } from '../shared/Tube'
 import { HOT, fmtC, mix, patchesOf, rangeC } from '../shared/material'
-import { clamp01, lerp, smoothstep, useMotionClock, useReducedMotion, useTimeline } from '../shared/motion'
-import { chainPoints, lerpPoints, planTangle, shake } from '../shared/tangle'
+import { lerp, smoothstep, useMotionClock, useReducedMotion, useTimeline } from '../shared/motion'
 import { ActionButton, RangeSlider, Row, SimFrame, type Marker } from '../shared/ui'
+import { isStacked, useElementSize } from '../shared/layout'
+import { Bed, ChainLens, LensLabelOverlay, useLensLabels, type LensLabels } from '../shared/printing'
+import { HeatLensChains } from './HeatLens'
+import { LENS_R, heatLensLabels } from './lensLabels'
+import { LAYERS, heatRange, lineGeometry, posesAt, wallAt, writeWallLine, type WallState } from './wall'
 
-// Heat it up: a temperature slider from room temperature to the top of the nozzle range.
-// Below Tg the chains only shiver; above it they start to slither past each other; crystals or hard
-// islands hold until their melt; in the print range everything flows. All thresholds come from temps.
+// Heat it up, as a printing close-up (D18, 17 Oct): a printed wall standing on the bed, a stack of
+// printed lines at real proportions, warmed as the temperature slider climbs. Below Tg it stands stiff;
+// past Tg it slumps over under its own weight; crystals (PLA) or hard islands (TPU) hold it until their
+// melt; near the print range the lines melt back into a puddle like what comes out of the nozzle.
+// A lens on one line shows the chains: frozen, then sliding, then the crystals or islands letting go.
+// The wall is a pure function of the temperature; only the chains' wriggle reads the motion clock, which
+// runs while the sweep plays or the slider is dragged and stops on the sweep's last frame.
 
 const SWEEP_MS = 8000
-
-function heatRange(m: Material): [number, number] {
-  const lo = Math.min(20, Math.floor((m.temps.tgC - 10) / 10) * 10)
-  return [lo, Math.max(lo + 10, m.temps.nozzleC[1])]
-}
 
 type Phase = 'frozen' | 'held' | 'soft' | 'runny'
 
@@ -32,23 +36,22 @@ function heatPhase(m: Material, t: number): Phase {
 
 function readout(m: Material, t: number): string {
   const patches = patchesOf(m)
-  const phase = heatPhase(m, t)
   const lead = `${fmtC(t)} · `
-  switch (phase) {
+  switch (heatPhase(m, t)) {
     case 'frozen':
-      return `${lead}Frozen: the chains only shiver in place, so it is stiff`
+      return `${lead}Frozen: the chains only shiver in place, so the wall stands stiff`
     case 'held':
       return patches === 'islands'
-        ? `${lead}Rubbery: the soft chains move, the hard islands hold them together`
-        : `${lead}Soft: the tangled chains slide, the crystals still hold`
+        ? `${lead}Rubbery: the soft chains move, the hard islands hold the wall up`
+        : `${lead}Soft: the tangle slides and the wall sags, the crystals still hold`
     case 'soft':
       return patches === 'crystals'
-        ? `${lead}Crystals melted: soft and gooey, not runny enough to print yet`
+        ? `${lead}Crystals melted: the wall slumps, gooey, not runny enough to print yet`
         : patches === 'islands'
-          ? `${lead}Islands let go: gooey, not runny enough to print yet`
-          : `${lead}Soft: the chains slide past each other, so it bends and sags`
+          ? `${lead}Islands let go: the wall slumps, gooey, not runny enough to print yet`
+          : `${lead}Soft: the chains slide past each other, so the wall sags`
     case 'runny':
-      return `${lead}Runny: print range, the chains flow like honey`
+      return `${lead}Runny: print range, the wall melts into a puddle`
   }
 }
 
@@ -57,15 +60,15 @@ function caption(m: Material): Text {
   const patches = patchesOf(m)
   const morph =
     patches === 'crystals'
-      ? ` The neat, light folds are crystals: they hold on until ${fmtC(meltC!)}.`
+      ? ` The neat folds in the circle are crystals: they hold on until ${fmtC(meltC!)}, so the wall sags but does not slump flat.`
       : patches === 'islands'
-        ? ` The tight clumps are hard islands: they tie the soft chains together until ${fmtC(meltC!)}, which is why ${m.short} springs back.`
+        ? ` The tight clumps in the circle are hard islands: they tie the soft chains together until ${fmtC(meltC!)}, so the wall stays up, bendy but standing.`
         : m.morphology === 'rubber-toughened'
-          ? ' The soft blobs are rubber, mixed in to make it tough.'
+          ? ' The pale blobs in the circle are rubber, mixed in to make it tough.'
           : ' There are no crystals, just a tangle, so it softens gradually.'
   return {
-    simple: `These are ${m.short} chains. Heat makes them jiggle. Below ${fmtC(tgC)} they are frozen stiff; above it they start to slide past each other, so a part can soften and sag.${morph} At ${rangeC(nozzleC)} they flow, which is why that is the nozzle range.`,
-    deeper: `${fmtC(tgC)} is the glass transition (Tg): below it the chains are locked in a glassy solid and only vibrate; above it whole sections can wriggle and slide (reptation).${meltC != null && patches ? ` Ordered regions melt at ${fmtC(meltC)}.` : ''}${hdtC != null ? ` The heat deflection temperature, where a loaded test bar starts to bend, is ${fmtC(hdtC)}.` : ''} Printing at ${rangeC(nozzleC)} makes the melt runny enough to push through the nozzle and fuse to the layer below.`,
+    simple: `A printed wall of ${m.short}, ten lines high, standing on the bed, and a heater warming it; orange shows heat, like a thermal camera. The circle is a sketch of the chains inside one line. Below ${fmtC(tgC)} they are frozen and the wall stands stiff; above it they start to slide past each other, so the wall sags under its own weight.${morph} At ${rangeC(nozzleC)} the chains flow and the wall melts back into a puddle, which is why that is the nozzle range.`,
+    deeper: `${fmtC(tgC)} is the glass transition (Tg): below it the chains are locked in a glassy solid and only vibrate; above it whole sections can wriggle and slide (reptation), so the part creeps under any load, even its own weight.${meltC != null && patches ? ` Ordered regions melt at ${fmtC(meltC)}.` : ''}${hdtC != null ? ` The heat deflection temperature, where a loaded test bar starts to bend, is ${fmtC(hdtC)}.` : ''} Printing at ${rangeC(nozzleC)} makes the melt runny enough to push through the nozzle and fuse to the layer below. The close-up is to scale (0.45 mm lines, 0.2 mm layers); how far it sags at each temperature is a teaching picture, since real sagging also depends on time and load.`,
   }
 }
 
@@ -77,6 +80,11 @@ function HeatSim({ material: m }: SimProps) {
   const clock = useMotionClock(reduced, timeline)
   const { tgC, meltC, nozzleC } = m.temps
   const patches = patchesOf(m)
+  const state = wallAt(m, temp)
+  const [stageRef, size] = useElementSize<HTMLDivElement>()
+  const tall = isStacked(size)
+  const handle = useLensLabels()
+  const labels = useMemo(() => heatLensLabels(m), [m])
 
   const markers: Marker[] = [{ value: tgC, label: `Chains slide ${fmtC(tgC)}` }]
   if (patches && meltC != null) markers.push({ value: meltC, label: `${patches === 'crystals' ? 'Crystals melt' : 'Islands let go'} ${fmtC(meltC)}` })
@@ -89,11 +97,13 @@ function HeatSim({ material: m }: SimProps) {
 
   return (
     <SimFrame
+      stageRef={stageRef}
       stage={
-        <SimCanvas fitRadius={3.4} label={`${m.short} chains at ${fmtC(temp)}`}>
-          <HeatScene m={m} temp={temp} time={clock.time} />
+        <SimCanvas {...(tall ? TALL : WIDE).camera} label={`Close-up of a printed wall of ${m.short} on the bed at ${fmtC(temp)}, with a sketch of the chains inside one line`}>
+          <HeatScene m={m} state={state} time={clock.time} lens={(tall ? TALL : WIDE).lens} labels={labels} handle={handle} />
         </SimCanvas>
       }
+      overlay={<LensLabelOverlay labels={labels} handle={handle} />}
       controls={
         <div className="flex flex-col gap-2 md:flex-row-reverse md:items-center md:gap-6">
           <RangeSlider
@@ -130,54 +140,82 @@ function HeatSim({ material: m }: SimProps) {
   )
 }
 
-/** How hard the chains jiggle (scene units) and how far they slither along their path (0..1). */
-function motionAt(m: Material, t: number) {
-  const { tgC, nozzleC } = m.temps
-  const [lo] = heatRange(m)
-  if (t < tgC) return { amp: 0.015 + 0.03 * clamp01((t - lo) / Math.max(1, tgC - lo)), slide: 0 }
-  if (t < nozzleC[0]) {
-    const k = clamp01((t - tgC) / Math.max(1, nozzleC[0] - tgC))
-    return { amp: 0.06 + 0.1 * k, slide: 0.25 + 0.45 * k }
-  }
-  const k = clamp01((t - nozzleC[0]) / Math.max(1, nozzleC[1] - nozzleC[0]))
-  return { amp: 0.16 + 0.08 * k, slide: 0.75 + 0.25 * k }
-}
+// ---------------------------------------------------------------- the close-up
 
-function HeatScene({ m, temp, time }: { m: Material; temp: number; time: number }) {
-  const plan = useMemo(() => planTangle(m), [m])
-  const [lo, hi] = heatRange(m)
-  const heat = clamp01((temp - lo) / (hi - lo))
-  const { amp, slide } = motionAt(m, temp)
-  const melt = m.temps.meltC != null ? smoothstep(m.temps.meltC - 6, m.temps.meltC + 6, temp) : 1
-  const patchColour = mix(mix(m.accent, '#FFFFFF', 0.55), m.accent, melt)
-  const glow = 0.04 + 0.3 * heat * heat
+// Two framings: the lens beside the wall on a wide stage, above it on a tall one (a phone).
+type V3 = [number, number, number]
+const WIDE = { camera: { fitBox: [10.5, 6, 3] as V3, viewFrom: [0.75, 0.38, 1] as V3, target: [2, 4.3, 0] as V3 }, lens: [9.5, 6.8, 2] as V3 }
+const TALL = { camera: { fitBox: [6.2, 9.6, 3] as V3, viewFrom: [0.75, 0.38, 1] as V3, target: [-0.5, 7, 0] as V3 }, lens: [1.2, 12.2, 3] as V3 }
 
+/** The line the lens looks at, and how far along the wall. */
+const LENS_LINE = 6
+const LENS_X = -1.5
+
+function HeatScene({ m, state, time, lens, labels, handle }: { m: Material; state: WallState; time: number; lens: V3; labels: ReturnType<typeof heatLensLabels>; handle: LensLabels }) {
+  // The ring sits on the face of one line, following it as the wall leans and melts.
+  // Standing, it sits on the line's front face; as the wall melts flat it moves onto the puddle's top.
+  const p = posesAt(state, LENS_X)[LENS_LINE]
+  const P = smoothstep(0.3, 0.8, state.puddle)
+  const face: V3 = [LENS_X, p.y + p.a * Math.sin(p.tilt), p.z + p.a * Math.cos(p.tilt) + 0.03]
+  const top: V3 = [LENS_X, p.y + p.b + 0.03, p.z]
+  const target: V3 = [face[0], lerp(face[1], top[1], P), lerp(face[2], top[2], P)]
+  const ringTurn = lerp(-p.tilt, -Math.PI / 2, P)
   return (
     <group>
-      {plan.paths.map((path, i) => (
-        <Tube key={i} points={chainPoints(path, i, time, slide, amp)} color={m.accent} emissive={HOT} emissiveIntensity={glow * 0.5} radius={0.085} />
+      <Bed x={[-40, 40]} z={[-14, 30]} />
+      {Array.from({ length: LAYERS }, (_, i) => (
+        <WallLine key={i} i={i} m={m} state={state} />
       ))}
-      {plan.patches.map((p, i) => (
-        <Tube
-          key={`p${i}`}
-          points={shake(lerpPoints(p.folded, p.loose, melt), lerp(amp * 0.25, amp, melt), time, 50 + i)}
-          color={patchColour}
-          emissive={HOT}
-          emissiveIntensity={glow * 0.4}
-          radius={0.1}
-          samples={64}
-        />
-      ))}
-      {plan.blobs.map((b, i) => {
-        const wobble = 1 + amp * 0.8 * Math.sin(time * 6 + i * 2.1)
-        return (
-          <mesh key={`b${i}`} position={b.centre} scale={[b.radius * wobble, (b.radius / wobble) * 0.95, b.radius]}>
-            <sphereGeometry args={[1, 28, 20]} />
-            <meshStandardMaterial color="#E8ECF7" roughness={0.6} transparent opacity={0.26} depthWrite={false} />
-          </mesh>
-        )
-      })}
-      <pointLight position={[0, 2.5, 3.5]} color={HOT} intensity={heat * heat * 10} distance={12} />
+      <Heater heat={state.heat} />
+      <ChainLens centre={lens} radius={LENS_R} target={target} ringRotation={[ringTurn, 0, 0]} labels={labels} handle={handle}>
+        <HeatLensChains m={m} state={state} time={time} />
+      </ChainLens>
+    </group>
+  )
+}
+
+/** Plastic colour at this heat: its own colour, warming to orange like a thermal camera. */
+function plasticColour(m: Material, i: number, s: WallState): string {
+  // Neighbouring lines alternate a little in shade so the stack reads; the puddle evens them out.
+  const shade = mix(m.accent, '#0B1020', (0.18 + 0.1 * (i % 2)) * (1 - s.puddle) + 0.18 * s.puddle)
+  return mix(shade, '#FF9A55', 0.85 * s.heat ** 1.6)
+}
+
+function WallLine({ i, m, state }: { i: number; m: Material; state: WallState }) {
+  const invalidate = useThree((s) => s.invalidate)
+  const geom = useMemo(() => lineGeometry(), [])
+  useEffect(() => () => geom.dispose(), [geom])
+  const { sag, puddle } = state
+  useLayoutEffect(() => {
+    writeWallLine(geom, { sag, puddle }, i)
+    invalidate()
+  }, [geom, sag, puddle, i, invalidate])
+  return (
+    <mesh geometry={geom} frustumCulled={false}>
+      <meshStandardMaterial color={plasticColour(m, i, state)} roughness={0.38 - 0.2 * puddle} metalness={0.02} emissive={HOT} emissiveIntensity={0.5 * state.heat ** 3} />
+    </mesh>
+  )
+}
+
+/** A heater coil behind the wall, like the element in an oven: dull at room temperature, glowing as it climbs. */
+function Heater({ heat }: { heat: number }) {
+  const glow = heat ** 1.4
+  const geom = useMemo(() => {
+    const turns = 26
+    const len = 26
+    const pts = Array.from({ length: turns * 16 + 1 }, (_, k) => {
+      const a = (k / 16) * Math.PI * 2
+      return new THREE.Vector3(-len / 2 + (k / (turns * 16)) * len, 0.6 * Math.sin(a), 0.6 * Math.cos(a))
+    })
+    return new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), turns * 24, 0.16, 8, false)
+  }, [])
+  useEffect(() => () => geom.dispose(), [geom])
+  return (
+    <group position={[-3, 2.6, -9]}>
+      <mesh geometry={geom}>
+        <meshStandardMaterial color={mix('#5A606E', '#FF8A3D', glow)} emissive={HOT} emissiveIntensity={2 * glow} roughness={0.5} metalness={0.4} />
+      </mesh>
+      <pointLight position={[6, -3, 4]} color={HOT} intensity={glow * 60} distance={24} />
     </group>
   )
 }
