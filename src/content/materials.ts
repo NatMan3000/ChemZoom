@@ -97,7 +97,7 @@ export const materials: Record<Material['id'], Material> = {
         deeper: 'Each repeat unit is -O-CH(CH3)-C(=O)-, C3H4O2, 72 g/mol. The links between units are ester bonds, so PLA is a polyester, like the PET in drink bottles.',
       },
       molecule: {
-        simple: 'Four lactic acid units joined in a row. The lit part is one repeat unit. Tap the ester link to see what holds them together.',
+        simple: 'Four lactic acid units joined in a row. The outlined part is one repeat unit. Tap the ester link to see what holds them together.',
         deeper: 'Every chiral carbon here is (S), the L form, as in poly(L-lactide) (PLLA) made from L-lactide. Polymerising a 50:50 mix of L and D lactide gives an amorphous PLA instead.',
       },
       atom: {
@@ -264,7 +264,7 @@ export const materials: Record<Material['id'], Material> = {
         deeper: 'The PET repeat unit is -O-CH2-CH2-O-C(=O)-C6H4-C(=O)-, C10H8O4, 192 g/mol. In PETG some units carry CHDM in place of the ethylene glycol.',
       },
       molecule: {
-        simple: 'Two PET units and one CHDM unit. The lit part is one PET unit. Tap the CHDM ring to see the bulky bit that makes PET into PETG.',
+        simple: 'Two PET units and one CHDM unit. The outlined part is one PET unit. Tap the CHDM ring to see the bulky bit that makes PET into PETG.',
         deeper: 'Ester links join every acid to every glycol. The flat benzene ring in each unit makes the chain stiff; the puckered cyclohexane ring of CHDM is what spoils the packing.',
       },
       atom: {
@@ -427,7 +427,7 @@ export const materials: Record<Material['id'], Material> = {
         deeper: 'Hard segment: MDI linked by butanediol. Soft segment: a long polyether or polyester polyol. Changing the ratio, structure and length of these blocks gives a huge range of TPUs, from soft to hard.',
       },
       molecule: {
-        simple: 'A piece of hard segment: two MDI molecules held together by butanediol. The lit part is one repeat unit. Tap a urethane link: these are what grip the next chain.',
+        simple: 'A piece of hard segment: two MDI molecules held together by butanediol. The outlined part is one repeat unit. Tap a urethane link: these are what grip the next chain.',
         deeper: 'Each urethane N-H can hydrogen-bond to a C=O on a neighbouring hard segment. Those hydrogen bonds hold the hard islands together and, when the material is stretched, add to its strength and tear resistance.',
       },
       atom: {
@@ -590,7 +590,7 @@ export const materials: Record<Material['id'], Material> = {
         deeper: 'SAN is a copolymer of styrene and acrylonitrile. Wikipedia describes ABS as a long chain of polybutadiene crisscrossed with shorter chains of poly(styrene-co-acrylonitrile).',
       },
       molecule: {
-        simple: 'A glassy branch (styrene, acrylonitrile, styrene) growing off a rubber chain. The lit part is one styrene unit. Tap the C=C double bond: that is the weak spot sunlight attacks.',
+        simple: 'A glassy branch (styrene, acrylonitrile, styrene) growing off a rubber chain. The outlined part is one styrene unit. Tap the C=C double bond: that is the weak spot sunlight attacks.',
         deeper: 'The rubber backbone is -CH2-CH=CH-CH2- (cis-1,4 here). Nitrile groups on neighbouring chains are polar and attract each other, which is why ABS is stronger than plain polystyrene.',
       },
       atom: {
@@ -757,7 +757,7 @@ export const materials: Record<Material['id'], Material> = {
         deeper: 'Poly(n-butyl acrylate): -CH2-CH(COOC4H9)- repeated. The double bond in each butyl acrylate is used up when it joins the chain, leaving a saturated backbone.',
       },
       molecule: {
-        simple: 'A glassy branch (styrene, acrylonitrile, styrene) growing off an acrylate rubber chain. The lit part is one styrene unit. Now look for a C=C double bond in the rubber: there isn’t one.',
+        simple: 'A glassy branch (styrene, acrylonitrile, styrene) growing off an acrylate rubber chain. The outlined part is one styrene unit. Now look for a C=C double bond in the rubber: there isn’t one.',
         deeper: 'The SAN branch is grafted onto the rubber backbone. Each rubber unit carries a butyl ester side group; tap it to see where the oxygen atoms sit.',
       },
       atom: {

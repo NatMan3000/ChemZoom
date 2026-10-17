@@ -73,7 +73,7 @@ export function StepCard({ material, level, molecule, go, highlight, setHighligh
           {MORPHOLOGY_LABELS[material.morphology]}
         </p>
       )}
-      {level === 'molecule' && molecule && <GroupPicker molecule={molecule} highlight={highlight} setHighlight={setHighlight} accent={material.accent} />}
+      {level === 'molecule' && molecule && <GroupPicker molecule={molecule} highlight={highlight} setHighlight={setHighlight} accent={material.accent} short={material.short} />}
       {level === 'atom' && molecule && atomIndex !== null && <AtomStep molecule={molecule} atomIndex={atomIndex} setAtom={setAtom} />}
       {level === 'atom' && <NextMaterial material={material} />}
       {(level === 'molecule' || level === 'atom') && !molecule && <p className="mt-3 text-sm text-ink-muted">The 3D model for {material.short} is still being built.</p>}
@@ -95,7 +95,7 @@ function SpoolMaths({ material }: { material: Material }) {
   )
 }
 
-function GroupPicker({ molecule, highlight, setHighlight, accent }: { molecule: Molecule; highlight: string | null; setHighlight: (g: string | null) => void; accent: string }) {
+function GroupPicker({ molecule, highlight, setHighlight, accent, short }: { molecule: Molecule; highlight: string | null; setHighlight: (g: string | null) => void; accent: string; short: string }) {
   const active = molecule.groups.find((g) => g.id === highlight)
   const chip = 'min-h-10 rounded-full border px-3.5 text-sm font-semibold transition-colors duration-200'
   return (
@@ -104,6 +104,15 @@ function GroupPicker({ molecule, highlight, setHighlight, accent }: { molecule: 
         Light up a part of {molecule.name} <span className="tabular-nums">(<Formula formula={molecule.formula} />)</span>:
       </p>
       <div className="flex flex-wrap gap-2">
+        {/* The whole piece is lit when you arrive; the chips light single parts (D19, 17 Oct). */}
+        <button
+          type="button"
+          onClick={() => setHighlight(null)}
+          aria-pressed={highlight === null}
+          className={clsx(chip, highlight === null ? 'border-primary bg-primary/15 text-primary' : 'border-line text-ink-muted hover:bg-surface-2')}
+        >
+          The whole piece
+        </button>
         {molecule.groups.map((g) => (
           <button
             key={g.id}
@@ -116,16 +125,14 @@ function GroupPicker({ molecule, highlight, setHighlight, accent }: { molecule: 
             {g.label}
           </button>
         ))}
-        <button
-          type="button"
-          onClick={() => setHighlight(null)}
-          aria-pressed={highlight === null}
-          className={clsx(chip, highlight === null ? 'border-primary bg-primary/15 text-primary' : 'border-line text-ink-muted hover:bg-surface-2')}
-        >
-          Show it all
-        </button>
       </div>
-      {active?.note && <TextBlock text={active.note} className="mt-3 rounded-lg bg-surface-2 p-3" />}
+      {active?.note ? (
+        <TextBlock text={active.note} className="mt-3 rounded-lg bg-surface-2 p-3" />
+      ) : (
+        <p className="mt-3 rounded-lg bg-surface-2 p-3 text-ink">
+          A short piece cut from one {short} chain. A real chain is thousands of these units long.
+        </p>
+      )}
       {/* Tappable looks tappable (finding 10): say so here as well as on the model. */}
       <p className="mt-3 flex items-start gap-2 rounded-lg border border-primary/30 bg-primary/10 px-3 py-2 text-sm text-ink">
         <MousePointerClick aria-hidden className="mt-0.5 size-4 shrink-0 text-primary" />
