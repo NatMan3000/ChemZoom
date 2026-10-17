@@ -39,12 +39,13 @@ export default function SimHostPage() {
             {material.short}
           </Link>
           <div className="min-w-0 flex-1">
-            <h1 className="flex items-center gap-2 font-display text-xl font-semibold text-ink sm:text-2xl">
+            <h1 className="flex flex-wrap items-center gap-x-2 gap-y-0.5 font-display text-xl font-semibold text-ink sm:text-2xl">
               <Play aria-hidden className="size-5 text-primary" />
-              {sim.title}
+              <span>{sim.title}</span>
               {compareWith && (
-                <span className="text-base font-normal text-ink-muted">
-                  : {material.short} and {compareWith.short}
+                // Its own line on a phone so the title never splits into two ragged columns.
+                <span className="w-full text-base font-normal text-ink-muted sm:w-auto">
+                  {material.short} and {compareWith.short}
                 </span>
               )}
             </h1>

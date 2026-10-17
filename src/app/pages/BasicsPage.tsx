@@ -107,7 +107,7 @@ function ElementGrid({ symbols }: { symbols: ElementSymbol[] }) {
               <span className="min-w-0">
                 <span className="block font-display text-lg font-semibold text-ink">{e.name}</span>
                 <span className="block text-xs text-ink-muted">
-                  <span className="tabular-nums">{e.number}</span> protons, usually <span className="tabular-nums">{e.bondsUsually}</span> {e.bondsUsually === 1 ? 'bond' : 'bonds'}
+                  <span className="tabular-nums">{e.number}</span> {e.number === 1 ? 'proton' : 'protons'}, usually <span className="tabular-nums">{e.bondsUsually}</span> {e.bondsUsually === 1 ? 'bond' : 'bonds'}
                 </span>
               </span>
             </div>
