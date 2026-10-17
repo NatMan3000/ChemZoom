@@ -193,14 +193,13 @@ function MaterialView({ material, level, experiment }: { material: Material; lev
             </div>
           </div>
 
-          {!experiment && (
-            <div className="mt-auto flex flex-col items-start gap-2 lg:flex-row lg:items-end">
-              <StageFoot material={material} level={level} molecule={molecule} />
-              <div className="max-w-full lg:ml-auto">
-                <StageExperiments material={material} level={level} active={null} />
-              </div>
+          {/* The experiments row stays put while one plays, so the next one is where it was (Nathan, 17 Oct). */}
+          <div className="mt-auto flex flex-col items-start gap-2 lg:flex-row lg:items-end">
+            {!experiment && <StageFoot material={material} level={level} molecule={molecule} />}
+            <div className="max-w-full lg:ml-auto">
+              <StageExperiments material={material} level={level} active={experiment?.id ?? null} />
             </div>
-          )}
+          </div>
         </div>
       </section>
 

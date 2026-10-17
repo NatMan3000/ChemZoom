@@ -30,6 +30,9 @@ Recorded with Nathan's words before any worker is briefed. The intent answers (1
 
 - **Each zoom level is the piece you were zooming into, the same way round** (reference session, 17 Oct, on spool to strand): "The transition should actually have the strand at the same angle as what's coming out of the roll, so you end up zooming into the strand end that is coming out of the roll and that becomes the strand piece that you're looking at the end of currently it's at the opposite angle and doesn't transition into it." Every hand-over continues the same object at the same angle and place: the spool's free end becomes the strand, the strand's cut face becomes the tangle, the pulled-out chain becomes the chain, its focus unit becomes the molecule, the picked atom becomes the atom.
 
+- **The experiments row stays put on the stage** (reference session, 17 Oct): "I think they should just stay at the bottom right corner so you don't have to go looking for them to go to the next one". The row at the bottom right of the stage stays while an experiment plays, with the playing one lit.
+- **All five experiments are printing close-ups** (D18, 17 Oct: "Yes, build all four as printing close-ups"), following the Layer bonding trial: the printing scene at real proportions is the picture; the chains appear only in a labelled sketch lens.
+
 ## Reference page
 
 To be worked with Nathan: the PLA material page, all six steps. Not a template: each material and step keeps its own judgement.
