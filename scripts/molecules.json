@@ -1,0 +1,49 @@
+[
+  {
+    "id": "pla-oligomer",
+    "name": "PLA chain piece (3 repeat units)",
+    "smiles": "C[C@H](O)C(=O)O[C@@H](C)C(=O)O[C@@H](C)C(=O)O",
+    "groups": [
+      { "id": "repeat", "label": "One repeat unit", "kind": "repeat-unit", "smarts": "[CH3][CH](O)C(=O)O", "match": 1 },
+      { "id": "ester", "label": "Ester link", "kind": "functional-group", "smarts": "C(=O)O[CH]", "match": 0 }
+    ],
+    "sources": [{ "label": "PubChem: Polylactic acid", "url": "https://pubchem.ncbi.nlm.nih.gov/compound/Polylactic-acid" }]
+  },
+  {
+    "id": "petg-oligomer",
+    "name": "PETG chain piece (PET unit + CHDM unit)",
+    "smiles": "OCCOC(=O)c1ccc(cc1)C(=O)OCC1CCC(CC1)COC(=O)c1ccc(cc1)C(=O)O",
+    "groups": [
+      { "id": "repeat", "label": "One PET repeat unit", "kind": "repeat-unit", "smarts": "OCCOC(=O)c1ccc(cc1)C(=O)", "match": 0 },
+      { "id": "chdm", "label": "The bulky CHDM ring", "kind": "functional-group", "smarts": "C1CCC(CC1)", "match": 0 }
+    ],
+    "sources": []
+  },
+  {
+    "id": "tpu-hard",
+    "name": "TPU hard segment (MDI + butanediol)",
+    "smiles": "OCCCCOC(=O)Nc1ccc(cc1)Cc1ccc(cc1)NC(=O)OCCCCO",
+    "groups": [
+      { "id": "urethane", "label": "Urethane link", "kind": "functional-group", "smarts": "NC(=O)O", "match": 0 }
+    ],
+    "sources": []
+  },
+  {
+    "id": "abs-oligomer",
+    "name": "ABS chain piece (acrylonitrile + butadiene + styrene)",
+    "smiles": "CC(C#N)CC/C=C/CCC(c1ccccc1)C",
+    "groups": [
+      { "id": "double-bond", "label": "C=C double bond in the rubber", "kind": "weak-spot", "smarts": "C=C", "match": 0 }
+    ],
+    "sources": []
+  },
+  {
+    "id": "asa-oligomer",
+    "name": "ASA chain piece (acrylonitrile + styrene + butyl acrylate)",
+    "smiles": "CC(C#N)CC(C(=O)OCCCC)CC(c1ccccc1)C",
+    "groups": [
+      { "id": "acrylate", "label": "Acrylate side group", "kind": "functional-group", "smarts": "C(=O)OCCCC", "match": 0 }
+    ],
+    "sources": []
+  }
+]

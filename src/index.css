@@ -1,0 +1,42 @@
+@import '@fontsource-variable/space-grotesk';
+@import '@fontsource-variable/plus-jakarta-sans';
+@import 'tailwindcss';
+
+/* Tokens: DESIGN.md is the source; keep the two in step. */
+@theme {
+  --font-display: 'Space Grotesk Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Plus Jakarta Sans Variable', ui-sans-serif, system-ui, sans-serif;
+
+  --color-stage: #0b1020;
+  --color-surface: #131a2e;
+  --color-surface-2: #1b2440;
+  --color-line: #2a3558;
+  --color-ink: #e8ecf7;
+  --color-ink-muted: #a3aecb;
+  --color-primary: #8b9cff;
+
+  --color-pla: #4ade80;
+  --color-petg: #22d3ee;
+  --color-tpu: #f472b6;
+  --color-abs: #fbbf24;
+  --color-asa: #fb923c;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-stage);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
