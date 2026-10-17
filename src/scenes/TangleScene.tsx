@@ -1,28 +1,31 @@
 import { useEffect, useMemo } from 'react'
 import * as THREE from 'three'
-import { tangleLayout } from '../three/chains'
 import type { Material } from '../types/chem'
 import { roleColour } from './palette'
+import { tangleFrame } from './sceneLayout'
 
-// Inside the strand: chains as tubes, arranged by the material's morphology.
+// Inside the strand: chains as tubes, arranged by the material's morphology. Every morphology is drawn
+// to one size (sceneLayout's tangleFrame), so the tangles compare at a glance.
 
 export function TangleScene({ material }: { material: Material }) {
-  const layout = useMemo(() => tangleLayout(material.morphology, 7), [material.morphology])
+  const frame = tangleFrame(material.morphology)
+  const { layout } = frame
   const tubes = useMemo(
     () =>
       layout.tubes.map((t, i) => ({
         key: i,
         role: t.role,
-        geom: new THREE.TubeGeometry(t.curve, t.role === 'rubber' ? 60 : 180, t.radius, 6, false),
+        geom: new THREE.TubeGeometry(t.curve, t.role === 'rubber' ? 60 : 180, t.radius / frame.scale, 6, false),
         colour: roleColour(material.accent, t.role, t.shade),
       })),
-    [layout, material.accent],
+    [layout, frame.scale, material.accent],
   )
   useEffect(() => () => tubes.forEach((t) => t.geom.dispose()), [tubes])
   const rubber = useMemo(() => roleColour(material.accent, 'rubber', 0.3), [material.accent])
 
   return (
-    <group>
+    <group scale={frame.scale}>
+      <group position={[-frame.centre.x, -frame.centre.y, -frame.centre.z]}>
       {tubes.map((t) => (
         <mesh key={t.key} geometry={t.geom}>
           <meshStandardMaterial
@@ -39,6 +42,7 @@ export function TangleScene({ material }: { material: Material }) {
           <meshStandardMaterial color={rubber} roughness={0.9} transparent opacity={0.42} depthWrite={false} />
         </mesh>
       ))}
+      </group>
     </group>
   )
 }
