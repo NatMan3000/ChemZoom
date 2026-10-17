@@ -19,6 +19,10 @@ Each entry carries its id, his words, the why and a test a stranger could apply 
 - **P1 - The pitch: zoom into your filament and see why it prints the way it does.** "Zoom into your filament and see why it prints the way it does" (D5, 17 Oct, picked the guess on Nexus). Why: every page earns its place by connecting what is inside the plastic to something seen at the printer; a page that does neither is decoration.
   Test: a first-time reader on the home page can say in one breath what the app does, and every material view connects at least one thing on screen to a printing behaviour.
 
+- **P2 - It is read on a desktop and on a phone.** "desktop and phone" (D6, 17 Oct, a correction of the guess that Josh would mostly use an iPad). Why: both are real ways in; a view that only works at one width fails half the visits.
+  Means: desktop and phone are the two widths every page is finished at; tablet is in between and follows from them.
+  Test: every page is signed off with a shot at 1920x1080 and at 390x844, and neither needs sideways scrolling or hides the 3D view.
+
 ## 2. The never list
 
 No lines yet.
@@ -64,4 +68,4 @@ P lines come from the intent questionnaire of 17 Oct 2026 (`drafts/intent-questi
 
 ## Id index
 
-- **P1** section 1
+- **P1** section 1 · **P2** section 1
