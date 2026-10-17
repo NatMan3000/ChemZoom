@@ -146,8 +146,9 @@ function MaterialView({ material, level, experiment }: { material: Material; lev
             resetSignal={resetSignal}
           />
         </div>
+        {/* The experiment's view ends above the experiments row, which stays on the stage while one plays. */}
         {experiment && (
-          <div ref={setStageSlot} className="absolute inset-0 bg-stage md:left-[var(--rail-right)]">
+          <div ref={setStageSlot} className="absolute inset-0 bg-stage md:bottom-[4.75rem] md:left-[var(--rail-right)]">
             <p className="grid h-full place-items-center text-ink-muted">Setting up the experiment</p>
           </div>
         )}
