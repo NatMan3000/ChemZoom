@@ -33,6 +33,8 @@ Recorded with Nathan's words before any worker is briefed. The intent answers (1
 - **The experiments row stays put on the stage** (reference session, 17 Oct): "I think they should just stay at the bottom right corner so you don't have to go looking for them to go to the next one". The row at the bottom right of the stage stays while an experiment plays, with the playing one lit.
 - **All five experiments are printing close-ups** (D18, 17 Oct: "Yes, build all four as printing close-ups"), following the Layer bonding trial: the printing scene at real proportions is the picture; the chains appear only in a labelled sketch lens.
 
+- **Rail-tap flights through several levels go a bit slower** (reference session, 17 Oct): "When being on one view, say the spool and then choosing the atom, it auto zooms in and cycles through them, which is a good effect, but I think it should be slowed down a bit". Keep the fly-through; about 1.5x slower (spool to atom about 3.6 s), one tunable constant.
+
 ## Reference page
 
 To be worked with Nathan: the PLA material page, all six steps. Not a template: each material and step keeps its own judgement.
