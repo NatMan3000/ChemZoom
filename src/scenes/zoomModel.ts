@@ -90,6 +90,19 @@ export function wheelToZ(deltaY: number, deltaMode: number, pinch: boolean): num
 
 export const levelName = (i: number): ZoomLevel => ZOOM_LEVELS[Math.max(0, Math.min(LAST, i))]
 
+/**
+ * How slowly a flight across levels (a rail tap, a tapped atom) plays: one number to tune. 1 was the first cut
+ * (spool to atom in 2.4 s); Nathan asked for it "slowed down a bit" (17 Oct), so 1.5: spool to atom in 3.6 s,
+ * one level in about 1.6 s. A flight back to the home view inside one level (a reset) keeps its quick 0.7 s.
+ */
+export const FLIGHT_PACE = 1.5
+
+/** How long a flight across `levels` of z takes, in ms. */
+export function flightDuration(levels: number): number {
+  if (levels < 0.6) return 700
+  return Math.min(2400, 700 + 340 * levels) * FLIGHT_PACE
+}
+
 /** How much more of a flight's time a hand-over gets than a hold zone, per unit of z: the hand-over is the show. */
 const CROSS_WEIGHT = 2.6
 

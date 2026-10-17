@@ -167,13 +167,20 @@ export interface PoseInputs {
   material: Material
   molecule: Molecule | null
   frame: StageFrame
-  /** Lit group at the molecule step. */
+  /** Lit group at the molecule step; null is the whole piece lit (D19), still framed on the repeat unit. */
   highlight: string | null
   /** Ball scale at the molecule step (space-filling). */
   atomScale: number
   /** The atom the zoom heads for at the molecule step, and shows at the atom step. */
   atom: number
 }
+
+/**
+ * The group the molecule step frames and the chain's bright capsule is laid onto: the lit chip's group, or with
+ * the whole piece lit (D19, highlight null) the material's repeat unit, so the zoom in from the chain lands the
+ * same way whichever is lit.
+ */
+const framedGroup = (o: PoseInputs) => o.highlight ?? o.material.repeatUnitGroup
 
 export function homeFor(level: ZoomLevel, o: PoseInputs): Home {
   const aspect = o.frame.aspect
@@ -204,7 +211,7 @@ export function homeFor(level: ZoomLevel, o: PoseInputs): Home {
     }
     case 'molecule': {
       const exit = o.molecule ? atomStagePosition(o.molecule, o.atom) : new THREE.Vector3()
-      const focus = o.molecule ? groupFocus(o.molecule, o.highlight) : null
+      const focus = o.molecule ? groupFocus(o.molecule, framedGroup(o)) : null
       const axis = o.molecule ? moleculeAxis(o.molecule) : new THREE.Vector3(1, 0, 0)
       const base = { exit, exitSize: 1, entryAxis: axis }
       if (focus) {
@@ -219,7 +226,7 @@ export function homeFor(level: ZoomLevel, o: PoseInputs): Home {
     }
     case 'atom': {
       const p = o.molecule ? atomStagePosition(o.molecule, o.atom) : new THREE.Vector3()
-      const near = o.molecule ? (groupFocus(o.molecule, o.highlight)?.dir ?? v3([0, 0.12, 1]).normalize()) : v3([0, 0.12, 1]).normalize()
+      const near = o.molecule ? (groupFocus(o.molecule, framedGroup(o))?.dir ?? v3([0, 0.12, 1]).normalize()) : v3([0, 0.12, 1]).normalize()
       const dir = o.molecule ? atomViewDirection(o.molecule, o.atom, near) : near
       // A little room past radius 7 for the atom's own card, which sits beside its outer shell.
       return { target: p, dist: fitDistance(ATOM_SCENE_RADIUS * ATOM_SCENE_SCALE, Math.min(aspect, 1.6)) * 1.04, dir, exit: p.clone(), exitSize: 1, entry: p.clone(), entrySize: 1 }

@@ -14,6 +14,7 @@ import type { Material, MaterialId, Molecule, ZoomLevel } from '../types/chem'
 import { AtomScene } from './AtomScene'
 import { ATOM_SCENE_SCALE, atomStagePosition, defaultAtomIndex } from './atomPick'
 import { ChainScene } from './ChainScene'
+import { flangeInTheWay, SPOOL_FLANGE_SIDES, SPOOL_TAIL_SIGHT, spoolPart } from './sceneLayout'
 import { SpoolScene } from './SpoolScene'
 import { StageLabel } from './StageLabel'
 import { StageLights } from './StageLights'
@@ -23,6 +24,7 @@ import { TangleScene } from './TangleScene'
 import {
   clampZ,
   dominantLevel,
+  flightDuration,
   flightPath,
   distFactor,
   HOLD_IN,
@@ -155,12 +157,32 @@ const slerpDir = (a: THREE.Vector3, b: THREE.Vector3, t: number, out = new THREE
 
 const smooth = (a: number, b: number, x: number) => THREE.MathUtils.smoothstep(x, a, b)
 
+/**
+ * The spool's parts as you zoom into its loose end. `eye` is the camera in the spool's own frame; `clear` (0 to 1)
+ * is how far a flange standing between the eye and the free part of the end has faded out of the way (so you never approach the
+ * end through a see-through wall, whichever way the spool was turned); `rest` fades the wound body and flanges
+ * at the hand-over; `end` is the loose end itself.
+ */
+function spoolParts(eye: THREE.Vector3, clear: number, rest: number, end: number): Pick<Shown, 'fade' | 'parts'> {
+  const parts: Record<string, number> = { [spoolPart.end]: end, [spoolPart.body]: rest }
+  for (const side of SPOOL_FLANGE_SIDES) {
+    const inTheWay = Math.max(...SPOOL_TAIL_SIGHT.map((p) => flangeInTheWay(eye, p, side)))
+    parts[spoolPart.flange(side)] = Math.min(rest, 1 - clear * inTheWay)
+  }
+  return { fade: Math.max(rest, end), parts }
+}
+
 interface Shown {
   fade: number
   pos?: THREE.Vector3
   scale?: number
   quat?: THREE.Quaternion
+  /** Fades for named parts of the scene, in place of one fade for the whole group (the spool's loose end and the rest of it). */
+  parts?: Record<string, number>
 }
+
+/** Marks a group whose fade is held per part (Shown.parts), so going back to a whole-group fade resets every part. */
+const PARTS = -1
 
 function Director({ material, level, onLevelChange, highlight, selectedAtom, onAtomClick, spaceFill, resetSignal }: ZoomStageProps) {
   const camera = useThree((s) => s.camera) as THREE.PerspectiveCamera
@@ -379,7 +401,7 @@ function Director({ material, level, onLevelChange, highlight, selectedAtom, onA
       const n = Math.abs(j - from)
       flight.current = {
         start: performance.now(),
-        duration: n < 0.6 ? 700 : Math.min(2400, 700 + 340 * n),
+        duration: flightDuration(n),
         from,
         to: j,
         report,
@@ -547,7 +569,32 @@ function Director({ material, level, onLevelChange, highlight, selectedAtom, onA
     camera.lookAt(target)
   }
 
-  const showGroup = (key: string, fade: number, pos?: THREE.Vector3, scale = 1, quat?: THREE.Quaternion) => {
+  /** Fade one object (a whole scene group, or a named part of one), touching its materials only when the fade changes. */
+  const fadeObject = (obj: THREE.Object3D, fkey: string, fade: number) => {
+    const last = faded.current.get(fkey)
+    if (fade >= 0.999) {
+      if (last !== 1) clearFade(obj)
+      faded.current.set(fkey, 1)
+    } else if (last !== fade) {
+      setFade(obj, fade)
+      faded.current.set(fkey, fade)
+    }
+  }
+
+  /** Put a group's per-part fades back to whole: every part visible, every material as built. */
+  const resetParts = (key: string, g: THREE.Group) => {
+    if (faded.current.get(key) !== PARTS) return
+    for (const fkey of [...faded.current.keys()]) {
+      if (!fkey.startsWith(`${key}/`)) continue
+      const part = g.getObjectByName(fkey.slice(key.length + 1))
+      if (part) part.visible = true
+      faded.current.delete(fkey)
+    }
+    clearFade(g)
+    faded.current.delete(key)
+  }
+
+  const showGroup = (key: string, fade: number, pos?: THREE.Vector3, scale = 1, quat?: THREE.Quaternion, parts?: Record<string, number>) => {
     const g = groups.current.get(key)
     if (!g) return
     if (pos) g.position.copy(pos)
@@ -559,14 +606,20 @@ function Director({ material, level, onLevelChange, highlight, selectedAtom, onA
       g.visible = fade > 0.002
       return
     }
-    const last = faded.current.get(key)
-    if (fade >= 0.999) {
-      if (last !== 1) clearFade(g)
-      faded.current.set(key, 1)
-    } else if (last !== fade) {
-      setFade(g, fade)
-      faded.current.set(key, fade)
+    if (parts) {
+      if (faded.current.get(key) !== PARTS) {
+        // From a whole-group fade to per-part fades: start from the materials as built.
+        clearFade(g)
+        faded.current.set(key, PARTS)
+      }
+      for (const [name, f] of Object.entries(parts)) {
+        const part = g.getObjectByName(name)
+        if (part) fadeObject(part, `${key}/${name}`, f)
+      }
+      return
     }
+    resetParts(key, g)
+    fadeObject(g, key, fade)
   }
 
   const atomFade = useRef<Record<string, number>>({})
@@ -650,7 +703,9 @@ function Director({ material, level, onLevelChange, highlight, selectedAtom, onA
       else if (f && f.sameLevel && f.to === ph.level) dir = slerpDir(f.dirFrom, H.dir, fe)
       else dir = currentDir()
       placeCamera(target, dir, H.dist * distFactor(name, ph.q))
-      shown[keyOf(mid, name, atomNow)] = { fade: 1 }
+      // Zooming in on the spool's loose end, a flange in the line of sight fades out of the way.
+      const clear = ph.level === 0 ? smooth(0.05, 0.3, ph.q) : 0
+      shown[keyOf(mid, name, atomNow)] = clear > 0 ? spoolParts(camera.position, clear, 1, 1) : { fade: 1 }
       cross.current = null
       firstApply.current = false
     } else {
@@ -686,8 +741,19 @@ function Director({ material, level, onLevelChange, highlight, selectedAtom, onA
         const dirB = slerpDir(cs.dirLo.clone().applyQuaternion(cs.rotInv), cs.dirHi, e).applyQuaternion(rotB)
         const distB = Math.exp(THREE.MathUtils.lerp(Math.log(d0 / cs.k), Math.log(d1), e))
         placeCamera(tB, dirB, sB * distB)
-        shown[keyOf(mid, levelName(lo), atomNow)] = { fade: fadeA, pos: anchor.clone().sub(A.exit.clone().multiplyScalar(sA).applyQuaternion(rotA)), scale: sA, quat: rotA }
-        shown[keyOf(mid, levelName(lo + 1), atomNow)] = { fade: fadeB, pos: anchor.clone().sub(B.entry.clone().multiplyScalar(sB).applyQuaternion(rotB)), scale: sB, quat: rotB }
+        const posA = anchor.clone().sub(A.exit.clone().multiplyScalar(sA).applyQuaternion(rotA))
+        const posB = anchor.clone().sub(B.entry.clone().multiplyScalar(sB).applyQuaternion(rotB))
+        if (lo === 0) {
+          // Spool to strand: one filament end. The rest of the spool (flanges, winding, the far part of the tail)
+          // fades first, leaving only the loose end; the strand, which is that same end drawn at its own scale,
+          // fades in exactly over it; then the spool's copy steps aside under it. Zooming out runs it backwards.
+          const eye = camera.position.clone().sub(posA).applyQuaternion(rotA.clone().invert()).divideScalar(sA)
+          shown[keyOf(mid, 'spool')] = { ...spoolParts(eye, 1, 1 - smooth(0, 0.3, ph.p), ph.p < 0.8 ? 1 : 0), pos: posA, scale: sA, quat: rotA }
+          shown[keyOf(mid, 'strand')] = { fade: smooth(0.35, 0.75, ph.p), pos: posB, scale: sB, quat: rotB }
+        } else {
+          shown[keyOf(mid, levelName(lo), atomNow)] = { fade: fadeA, pos: posA, scale: sA, quat: rotA }
+          shown[keyOf(mid, levelName(lo + 1), atomNow)] = { fade: fadeB, pos: posB, scale: sB, quat: rotB }
+        }
       }
       firstApply.current = false
     }
@@ -750,12 +816,13 @@ function Director({ material, level, onLevelChange, highlight, selectedAtom, onA
       const want = shown[key]
       if (!want || want.fade <= 0.002) {
         g.visible = false
+        resetParts(key, g)
         faded.current.delete(key)
         if (key.includes(':atom:')) nextAtomFade[key] = 0
         continue
       }
       g.visible = true
-      showGroup(key, want.fade, want.pos, want.scale, want.quat)
+      showGroup(key, want.fade, want.pos, want.scale, want.quat, want.parts)
       if (key.includes(':atom:')) nextAtomFade[key] = Math.round(want.fade * 40) / 40
     }
     const prev = atomFade.current
@@ -834,6 +901,11 @@ function Director({ material, level, onLevelChange, highlight, selectedAtom, onA
         enableZoom={false}
         enableDamping
         dampingFactor={0.12}
+        // A turn re-runs the placement, so what depends on the line of sight (a flange in front of the spool's
+        // loose end) follows it. Change events only fire while the view is turning: no idle frames.
+        onChange={() => {
+          dirty.current = true
+        }}
         rotateSpeed={0.7}
       />
     </>
@@ -892,6 +964,8 @@ function MaterialSet({
         <MoleculeScene
           id={m.oligomer}
           highlight={highlight}
+          // The whole piece lit (D19): its repeat unit, the one you zoomed into, is outlined instead of lit.
+          outline={highlight === null ? m.repeatUnitGroup : null}
           selectedAtom={moleculeLive ? selectedAtom : null}
           onAtomClick={moleculeLive ? onAtomTap : undefined}
           atomScale={spaceFill ? SPACE_FILL_SCALE : 1}
@@ -906,6 +980,7 @@ function MaterialSet({
 function MoleculeScene({
   id,
   highlight,
+  outline,
   selectedAtom,
   onAtomClick,
   atomScale,
@@ -914,6 +989,7 @@ function MoleculeScene({
 }: {
   id: string
   highlight: string | null
+  outline: string | null
   selectedAtom: number | null
   onAtomClick?: (i: number) => void
   atomScale: number
@@ -930,6 +1006,7 @@ function MoleculeScene({
       <MoleculeView
         molecule={molecule}
         highlight={highlight}
+        outline={outline}
         selectedAtom={selectedAtom}
         onAtomClick={onAtomClick}
         onAtomHover={(i) => {

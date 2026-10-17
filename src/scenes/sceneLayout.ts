@@ -15,24 +15,73 @@ export const SPOOL_WIND_R = 4.25
 export const SPOOL_TUBE = 0.068
 
 /**
- * The loose end, tucked through a hole in the flange the way spools ship, in the spool's own frame (built
- * around the y axis; SpoolScene lays it on its side with a quarter turn about z: x, y -> -y, x).
+ * The loose end, in stage units (the spool lies on its side, its axis along x). It is the last turn of the top
+ * layer peeling off: it lies in the winding over the back of the top, then springs up and forward off the top in
+ * a widening curl and ends, cut, standing clear of the winding's outline, midway between the flanges. So it
+ * reads against the dark from the spool's home view, the zoom reaches it without passing through a flange, and
+ * its cut face looks back toward the viewer. Measured round the axis from straight up
+ * toward the viewer (+z).
  */
-export const SPOOL_TAIL_POINTS = [
-  new THREE.Vector3(SPOOL_WIND_R, SPOOL_WIDTH / 2 - 0.3, 0),
-  new THREE.Vector3(SPOOL_WIND_R + 0.15, SPOOL_WIDTH / 2 - 0.1, 0.9),
-  new THREE.Vector3(SPOOL_WIND_R + 0.1, SPOOL_WIDTH / 2 + 0.25, 1.6),
-  new THREE.Vector3(SPOOL_WIND_R - 0.2, SPOOL_WIDTH / 2 + 0.6, 2.1),
-]
-export const spoolTailCurve = () => new THREE.CatmullRomCurve3(SPOOL_TAIL_POINTS)
-
-const layDown = (v: THREE.Vector3) => new THREE.Vector3(-v.y, v.x, v.z)
+const TAIL_FROM = THREE.MathUtils.degToRad(-45)
+const TAIL_TO = THREE.MathUtils.degToRad(15)
+/** Where along the tail it starts to lift off the winding, and how far off it has sprung at the tip. */
+const TAIL_LIFT_FROM = 0.5
+const TAIL_LIFT = 1.3
+function tailPoint(s: number): THREE.Vector3 {
+  const a = THREE.MathUtils.lerp(TAIL_FROM, TAIL_TO, s)
+  const lift = s < TAIL_LIFT_FROM ? 0 : TAIL_LIFT * ((s - TAIL_LIFT_FROM) / (1 - TAIL_LIFT_FROM)) ** 2
+  const r = SPOOL_WIND_R - SPOOL_TUBE + lift
+  return new THREE.Vector3(-1.1 + 0.5 * s * s, r * Math.cos(a), r * Math.sin(a))
+}
+const TAIL_POINTS = Array.from({ length: 41 }, (_, i) => tailPoint(i / 40))
+/** The loose end's centre line, stage units, from inside the winding (0) to the cut tip (1). */
+export const spoolTailCurve = () => new THREE.CatmullRomCurve3(TAIL_POINTS, false, 'centripetal')
 
 /** The tip of the spool's loose end, in stage units: what the spool's zoom heads for. */
-export const SPOOL_TAIL_TIP = layDown(SPOOL_TAIL_POINTS[SPOOL_TAIL_POINTS.length - 1])
+export const SPOOL_TAIL_TIP = TAIL_POINTS[TAIL_POINTS.length - 1].clone()
+
+/** Points along the free part of the loose end (where it has lifted off the winding), tip last: what must stay in clear sight as you zoom in. */
+export const SPOOL_TAIL_SIGHT = [0.62, 0.75, 0.88, 1].map((s) => tailPoint(s))
 
 /** Which way the loose end points at its tip (unit, stage units): the strand level continues it. */
-export const SPOOL_TAIL_DIR = layDown(spoolTailCurve().getTangentAt(1)).normalize()
+export const SPOOL_TAIL_DIR = spoolTailCurve().getTangentAt(1).normalize()
+
+/**
+ * How much of the loose end, from its far end, fades into nothing (as a fraction of its length): the part lying
+ * in the winding. When the rest of the spool fades out at the hand-over, the end you zoomed into fades away into
+ * the distance instead of stopping at an open tube end.
+ */
+export const TAIL_FADE_FROM = 0.06
+export const TAIL_FADE_TO = 0.3
+
+/** Flange size and place (SpoolScene builds them round its own y axis, at y = side * SPOOL_FLANGE_Y). */
+export const SPOOL_FLANGE_R = 5
+export const SPOOL_FLANGE_T = 0.16
+export const SPOOL_FLANGE_Y = SPOOL_WIDTH / 2 + SPOOL_FLANGE_T / 2
+export const SPOOL_FLANGE_SIDES = [-1, 1] as const
+
+/** The spool's parts the zoom fades apart (ZoomStage): the loose end, the wound body, and each flange. */
+export const spoolPart = {
+  end: 'spool-end',
+  body: 'spool-body',
+  flange: (side: number) => `spool-flange${side}`,
+}
+
+/**
+ * How much the flange on `side` stands between `eye` and `point` (both in the spool's stage frame, the axis along
+ * x), 0 to 1: 1 when the line of sight crosses the flange well inside its rim, easing to 0 just past the rim.
+ * The spool lies on its side with a quarter turn about z, so the flange at local y = side * Y sits at x = -side * Y.
+ */
+export function flangeInTheWay(eye: THREE.Vector3, point: THREE.Vector3, side: number): number {
+  const x = -side * SPOOL_FLANGE_Y
+  const dx = eye.x - point.x
+  if (Math.abs(dx) < 1e-9) return 0
+  const t = (x - point.x) / dx
+  if (t <= 0 || t >= 1) return 0
+  const y = point.y + t * (eye.y - point.y)
+  const z = point.z + t * (eye.z - point.z)
+  return 1 - THREE.MathUtils.smoothstep(Math.hypot(y, z), SPOOL_FLANGE_R - 0.1, SPOOL_FLANGE_R + 0.5)
+}
 
 // ---------------------------------------------------------------- strand
 
@@ -47,6 +96,20 @@ export const STRAND_AXIS = SPOOL_TAIL_DIR.clone()
 
 /** Strand radius in its own scene units. */
 export const STRAND_R = 1
+
+/**
+ * The strand's centre line in its own units: the spool's loose end itself, its tip moved to the cut face and
+ * scaled up to the strand's thickness. Both levels draw the one filament end from this (FilamentEnd), so across
+ * the hand-over the strand fades in exactly over the tail and only one filament is ever on screen.
+ */
+export const strandCurve = () => {
+  const k = STRAND_R / SPOOL_TUBE
+  return new THREE.CatmullRomCurve3(
+    TAIL_POINTS.map((p) => p.clone().sub(SPOOL_TAIL_TIP).multiplyScalar(k)),
+    false,
+    'centripetal',
+  )
+}
 
 // ---------------------------------------------------------------- tangle
 
