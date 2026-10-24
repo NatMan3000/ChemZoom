@@ -1,7 +1,7 @@
 ---
 type: plan
 title: ChemZoom DesignPass - first cut of the PLA reference page
-description: The brief every worker reads first for the first cut of the reference page (Nathan's D17 go, 17 Oct 2026): the targets from spec/design-intent.md, the three lanes with file ownership, the interfaces between them, and how to verify.
+description: "The brief every worker reads first for the first cut of the reference page (Nathan's D17 go, 17 Oct 2026): the targets from spec/design-intent.md, the three lanes with file ownership, the interfaces between them, and how to verify."
 created: 2026-10-17
 status: active
 ---
