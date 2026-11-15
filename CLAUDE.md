@@ -38,8 +38,8 @@ uv run --with rdkit python scripts/build-molecules.py   # scripts/molecules.json
 - Every fact shown in the app carries a source (`Fact.sources`, `Material.sources`, `Molecule.sources`).
 - Nothing animates unless the user made it move, and it stops by itself: `frameloop="demand"`, no `animate-pulse` / `ping` / `bounce`.
 - GitHub Pages subpath: asset paths go through `import.meta.env.BASE_URL` (`~/Dev/docs/github-pages-pwa-deploy.md`).
-- UI text: no em or en dashes, Australian spelling.
+- UI text: Australian spelling.
 
 ## Remotes
 
-Forgejo `nathan/ChemZoom` is fetch and push; GitHub `NatMan3000/ChemZoom` (public, for Pages) is a push-only mirror. Push to `origin` deploys via `.github/workflows/deploy.yml`.
+GitHub `NatMan3000/ChemZoom` is public (for Pages); push to `origin` deploys via `.github/workflows/deploy.yml`.
